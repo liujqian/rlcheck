@@ -72,6 +72,7 @@ public class XmlRLGenerator implements RLGenerator {
      * */
     @Override
     public void init(RLParams params) {
+        System.out.println("init of XMLRLGenerator is called!");
         if (params.exists("seed")){
             guide = new RLGuide((long) params.get("seed"));
         } else {

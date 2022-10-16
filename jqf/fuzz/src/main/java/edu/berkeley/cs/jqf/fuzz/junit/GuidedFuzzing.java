@@ -167,7 +167,7 @@ public class GuidedFuzzing {
 
         // Instantiate a runner (may return an error)
         Runner testRunner = testRequest.getRunner();
-
+        System.out.println("Successfully got test runner!");
         if (testRunner instanceof ErrorReportingRunner) {
             throw new IllegalArgumentException(String.format("Could not instantiate a Junit runner for method %s#%s.", testClass.getName(), testMethod));
         }
@@ -181,13 +181,10 @@ public class GuidedFuzzing {
             if (out != null) {
                 junit.addListener(new TextListener(out));
             }
+            System.out.println("Starting to run!");
             return junit.run(testRunner);
         } finally {
             unsetGuidance();
         }
-
-
-
     }
-
 }
