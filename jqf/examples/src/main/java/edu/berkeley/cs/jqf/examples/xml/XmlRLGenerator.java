@@ -179,8 +179,6 @@ public class XmlRLGenerator implements RLGenerator {
         }
         return newState;
     }
-
-
 }
 
 

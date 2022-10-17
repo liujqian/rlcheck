@@ -393,7 +393,6 @@ public class RLGuidance implements Guidance {
         } catch (IOException e) {
             throw new GuidanceException(e);
         }
-
     }
 
     @Override
