@@ -30,10 +30,14 @@ public class XmlRLGenerator implements RLGenerator {
             DocumentBuilderFactory.newInstance();
 
 
-    /** Max number of child nodes for each XML element. */
+    /**
+     * Max number of child nodes for each XML element.
+     */
     private static final int MAX_NUM_CHILDREN = 4;
 
-    /** Max number of attributes for each XML element. */
+    /**
+     * Max number of attributes for each XML element.
+     */
     private static final int MAX_NUM_ATTRIBUTES = 2;
 
     /**
@@ -46,11 +50,13 @@ public class XmlRLGenerator implements RLGenerator {
      */
     private int maxDepth = 5;
 
-    /** Terminal action output */
+    /**
+     * Terminal action output
+     */
 //    public static final String terminal = "END";
     private final List<Object> BOOLEANS = Arrays.asList(new Boolean[]{true, false});
-    private final List<Object> NUM_C =  Arrays.asList(RLGuide.range(0, MAX_NUM_CHILDREN));
-    private final List<Object> NUM_A =  Arrays.asList(RLGuide.range(0, MAX_NUM_ATTRIBUTES));
+    private final List<Object> NUM_C = Arrays.asList(RLGuide.range(0, MAX_NUM_CHILDREN));
+    private final List<Object> NUM_A = Arrays.asList(RLGuide.range(0, MAX_NUM_ATTRIBUTES));
 
 
     private int stateSize;
@@ -60,20 +66,21 @@ public class XmlRLGenerator implements RLGenerator {
     private int numaId;
 
     /* Need to initialize with parameters using init method after constructor is called. */
-    public XmlRLGenerator() {}
+    public XmlRLGenerator() {
+    }
 
     /**
      * Initialize models and generator parameters
-     * @param params:
-     *              stateSize,
-     *              tags,
-     *              numc,
-     *              defaultEpsilon
-     * */
+     *
+     * @param params: stateSize,
+     *                tags,
+     *                numc,
+     *                defaultEpsilon
+     */
     @Override
     public void init(RLParams params) {
         System.out.println("init of XMLRLGenerator is called!");
-        if (params.exists("seed")){
+        if (params.exists("seed")) {
             guide = new RLGuide((long) params.get("seed"));
         } else {
             guide = new RLGuide();
@@ -90,6 +97,7 @@ public class XmlRLGenerator implements RLGenerator {
 
     /**
      * Generators a random XML document.
+     *
      * @return a randomly-generated XML document
      */
     @Override
@@ -107,13 +115,16 @@ public class XmlRLGenerator implements RLGenerator {
         } catch (DOMException e) {
             Assume.assumeNoException(e);
         }
-
-        return  XMLDocumentUtils.documentToString(document);
+        String res = XMLDocumentUtils.documentToString(document);
+        System.out.println("XMLRLGenerator generated a string:\n" + res);
+        return res;
     }
 
-    /** Update using reward r */
+    /**
+     * Update using reward r
+     */
     @Override
-    public void update(int r){
+    public void update(int r) {
         guide.update(r);
     }
 
@@ -127,7 +138,9 @@ public class XmlRLGenerator implements RLGenerator {
         return document;
     }
 
-    /** Recursively generate XML */
+    /**
+     * Recursively generate XML
+     */
     private Element generateXmlTree(String[] stateArr, Document document, int depth) {
         String rootTag = (String) guide.select(stateArr, textId);
 
@@ -137,9 +150,9 @@ public class XmlRLGenerator implements RLGenerator {
         // Add attributes
         int numAttributes = (Integer) guide.select(stateArr, numaId);
         for (int i = 0; i < numAttributes; i++) {
-            String [] attrState = updateState(stateArr, "attrVal");
+            String[] attrState = updateState(stateArr, "attrVal");
             String attrKey = (String) guide.select(attrState, textId);
-            attrState = updateState(stateArr, "attrKey="+attrKey);
+            attrState = updateState(stateArr, "attrKey=" + attrKey);
             String attrValue = (String) guide.select(attrState, textId);
             root.setAttribute(attrKey, attrValue);
         }
@@ -161,7 +174,7 @@ public class XmlRLGenerator implements RLGenerator {
             textVal = (String) guide.select(textState, textId);
             Text text = document.createTextNode(textVal);
             root.appendChild(text);
-        } else if ((boolean) guide.select(CDATAState, boolId)){
+        } else if ((boolean) guide.select(CDATAState, boolId)) {
             textVal = (String) guide.select(CDATAState, textId);
             Text text = document.createCDATASection(textVal);
             root.appendChild(text);

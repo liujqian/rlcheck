@@ -30,6 +30,7 @@ package edu.berkeley.cs.jqf.fuzz.junit.quickcheck;
 
 import java.io.EOFException;
 import java.io.File;
+import java.io.InputStream;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
@@ -44,6 +45,7 @@ import com.pholser.junit.quickcheck.generator.Generator;
 import com.pholser.junit.quickcheck.internal.ParameterTypeContext;
 import com.pholser.junit.quickcheck.internal.generator.GeneratorRepository;
 import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+import edu.berkeley.cs.jqf.fuzz.ei.ZestGuidance;
 import edu.berkeley.cs.jqf.fuzz.guidance.Guidance;
 import edu.berkeley.cs.jqf.fuzz.guidance.GuidanceException;
 import edu.berkeley.cs.jqf.fuzz.guidance.TimeoutException;
@@ -133,7 +135,8 @@ public class FuzzStatement extends Statement {
                     try {
 
                         // Generate input values
-                        StreamBackedRandom randomFile = new StreamBackedRandom(guidance.getInput(), Long.BYTES);
+                        InputStream input = guidance.getInput();
+                        StreamBackedRandom randomFile = new StreamBackedRandom(input, Long.BYTES);
                         SourceOfRandomness random = new FastSourceOfRandomness(randomFile);
                         GenerationStatus genStatus = new NonTrackingGenerationStatus(random);
                         args = generators.stream()

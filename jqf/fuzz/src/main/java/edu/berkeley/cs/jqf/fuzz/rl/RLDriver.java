@@ -23,11 +23,19 @@ public class RLDriver {
 
     public static void main(String[] args) {
         // Hardcode the arguments for now.
+//        args = new String[]{
+//                "edu.berkeley.cs.jqf.examples.maven.ModelReaderTest",
+//                "testWithInputStream",
+//                "edu.berkeley.cs.jqf.examples.xml.XmlRLGenerator",
+//                "jqf/configFiles/mavenConfig.json",
+//                "jqf/output"
+//        };
+
         args = new String[]{
-                "edu.berkeley.cs.jqf.examples.maven.ModelReaderTest",
-                "testWithInputStream",
-                "edu.berkeley.cs.jqf.examples.xml.XmlRLGenerator",
-                "jqf/configFiles/mavenConfig.json",
+                "edu.berkeley.cs.jqf.examples.str.SimpleStringTest",
+                "testSimpleStr",
+                "edu.berkeley.cs.jqf.examples.str.SimpleStringGenerator",
+                "jqf/configFiles/strConfig.json",
                 "jqf/output"
         };
 
