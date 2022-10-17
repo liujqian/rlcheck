@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>edu.berkeley.cs.jqf</groupId>
@@ -48,8 +49,8 @@
     <scm>
         <connection>scm:git:git@github.com:rohanpadhye/jqf.git</connection>
         <url>https://github.com/rohanpadhye/jqf</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <issueManagement>
         <system>GitHub</system>
@@ -136,8 +137,11 @@
                     <configuration>
                         <links>
                             <link>http://junit.org/junit4/javadoc/latest/</link>
-                            <link>https://pholser.github.io/junit-quickcheck/site/0.7/junit-quickcheck-core/apidocs/</link>
-                            <link>https://pholser.github.io/junit-quickcheck/site/0.7/junit-quickcheck-generators/apidocs/</link>
+                            <link>https://pholser.github.io/junit-quickcheck/site/0.7/junit-quickcheck-core/apidocs/
+                            </link>
+                            <link>
+                                https://pholser.github.io/junit-quickcheck/site/0.7/junit-quickcheck-generators/apidocs/
+                            </link>
                         </links>
                     </configuration>
                     <executions>
