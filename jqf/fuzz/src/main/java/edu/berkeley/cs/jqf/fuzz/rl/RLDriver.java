@@ -21,10 +21,13 @@ import java.io.BufferedReader;
  * Created by clemieux on 6/17/19.
  */
 public class RLDriver {
-    private static final long MAX_RUN_TIME_SEC = 1;
+
 
     public static void main(String[] args) {
-        // Hardcode the arguments for now.
+        boolean isInDev = null == System.getenv("DEVELOPMENT");
+        Duration runTime = null;
+        if (isInDev) {
+            // Hardcode the arguments for now.
 //        args = new String[]{
 //                "edu.berkeley.cs.jqf.examples.maven.ModelReaderTest",
 //                "testWithInputStream",
@@ -33,16 +36,16 @@ public class RLDriver {
 //                "jqf/output"
 //        };
 
-        args = new String[]{
-                "edu.berkeley.cs.jqf.examples.str.SimpleStringTest",
-                "testSimpleStr",
-                "edu.berkeley.cs.jqf.examples.str.SimpleStringGenerator",
-                "jqf/configFiles/strConfig.json",
-                "jqf/output"
-        };
-
-        Duration runTime = MAX_RUN_TIME_SEC == 0 ? null : Duration.ofSeconds(MAX_RUN_TIME_SEC);
-
+            args = new String[]{
+                    "edu.berkeley.cs.jqf.examples.str.SimpleStringTest",
+                    "testSimpleStr",
+                    "edu.berkeley.cs.jqf.examples.str.SimpleStringGenerator",
+                    "jqf/configFiles/strConfig.json",
+                    "jqf/output"
+            };
+            final long MAX_RUN_TIME_SEC = 4;
+            runTime = Duration.ofSeconds(MAX_RUN_TIME_SEC);
+        }
 
         if (args.length < 4) {
             System.err.println("Usage: java " + RLDriver.class + " TEST_CLASS TEST_METHOD GENERATOR_CLASS CONFIG_FILE [OUTPUT_DIR]");

@@ -13,8 +13,8 @@ public class SimpleStringTest {
     @Fuzz
     public void testSimpleStr(InputStream s) {
         SimpleString simpleString = new SimpleString(s.toString());
-        // Test out an arbitrary precondition: the generated string should not be empty and should have "a" as the first character.
-        Assume.assumeTrue(simpleString.toString().length() > 0 && simpleString.toString().charAt(0) == 'a');
+        // Test out an arbitrary precondition: the generated string should not be empty.
+        Assume.assumeTrue(simpleString.toString().length() > 0);
         Assert.assertNotNull(simpleString);
     }
 }
