@@ -91,9 +91,8 @@ public class RLGuidance implements Guidance {
      */
     protected Coverage validCoverage = new Coverage();
 
-    //    protected Set<String> uniqueValidInputs = new HashSet<>();
+    // protected Set<String> uniqueValidInputs = new HashSet<>();
     protected Set<Integer> uniqueValidInputs = new HashSet<>();
-
 
     /**
      * Unique paths for valid inputs
@@ -104,7 +103,6 @@ public class RLGuidance implements Guidance {
      * Unique branch sets for valid inputs
      */
     protected Set<Integer> uniqueBranchSets = new HashSet<>();
-
 
     /**
      * The set of unique failures found so far.
@@ -195,7 +193,6 @@ public class RLGuidance implements Guidance {
         prepareOutputDirectory();
     }
 
-
     @Override
     public InputStream getInput() throws IllegalStateException, GuidanceException {
         runCoverage.clear();
@@ -216,7 +213,6 @@ public class RLGuidance implements Guidance {
             return elapsedMilliseconds < maxDurationMillis;
         }
     }
-
 
     @Override
     public void handleResult(Result result, Throwable error) throws GuidanceException {
@@ -273,7 +269,6 @@ public class RLGuidance implements Guidance {
                 generator.update(-1);
             }
 
-
             // Coverage after
 
             int validNonZeroAfter = validCoverage.getNonZeroCount();
@@ -285,7 +280,6 @@ public class RLGuidance implements Guidance {
                     throw new GuidanceException(e);
                 }
             }
-
 
         } else if (result == Result.FAILURE || result == Result.TIMEOUT) {
             String msg = error.getMessage();
@@ -314,8 +308,8 @@ public class RLGuidance implements Guidance {
 
     }
 
-
-    /// CL Note: Below this is boiler-plate that probably doesn't need to be messed with
+    /// CL Note: Below this is boiler-plate that probably doesn't need to be messed
+    /// with
 
     private void prepareOutputDirectory() throws IOException {
 
@@ -341,9 +335,9 @@ public class RLGuidance implements Guidance {
         this.statsFile = new File(outputDirectory, "plot_data");
         this.logFile = new File(outputDirectory, "fuzz.log");
 
-
         // Delete everything that we may have created in a previous run.
-        // Trying to stay away from recursive delete of parent output directory in case there was a
+        // Trying to stay away from recursive delete of parent output directory in case
+        // there was a
         // typo and that was not a directory we wanted to nuke.
         // We also do not check if the deletes are actually successful.
         statsFile.delete();
@@ -355,11 +349,10 @@ public class RLGuidance implements Guidance {
             file.delete();
         }
 
-        appendLineToFile(statsFile, "# unix_time, unique_crashes, total_cov, valid_cov, total_inputs, valid_inputs, valid_paths, valid_branch_sets, unique_valid_inputs");
-
+        appendLineToFile(statsFile,
+                "# unix_time, unique_crashes, total_cov, valid_cov, total_inputs, valid_inputs, valid_paths, valid_branch_sets, unique_valid_inputs");
 
     }
-
 
     /**
      * Returns the banner to be displayed on the status screen
@@ -369,12 +362,11 @@ public class RLGuidance implements Guidance {
                 "--------------------\n";
     }
 
-
     /* Saves an interesting input to the queue. */
     protected void saveCurrentInput(Boolean isValid) throws IOException {
-        System.out.println("Trying to save " + currentInput + " to disk. It is" + (isValid ? "valid." : "invalid."));
         String valid_str = isValid ? "_v" : "";
-        // First, save to disk (note: we issue IDs to everyone, but only write to disk  if valid)
+        // First, save to disk (note: we issue IDs to everyone, but only write to disk
+        // if valid)
         int newInputIdx = numSavedInputs++;
         String saveFileName = String.format("id_%06d%s", newInputIdx, valid_str);
         File saveFile = new File(savedInputsDirectory, saveFileName);
@@ -413,7 +405,6 @@ public class RLGuidance implements Guidance {
         long elapsedMilliseconds = now.getTime() - startTime.getTime();
         long execsPerSec = numTrials * 1000L / elapsedMilliseconds;
 
-
         int nonZeroCount = totalCoverage.getNonZeroCount();
         double nonZeroFraction = nonZeroCount * 100.0 / totalCoverage.size();
         int nonZeroValidCount = validCoverage.getNonZeroCount();
@@ -428,17 +419,21 @@ public class RLGuidance implements Guidance {
             }
             console.printf("Results directory:    %s\n", this.outputDirectory.getAbsolutePath());
             console.printf("Elapsed time:         %s (%s)\n", millisToDuration(elapsedMilliseconds),
-                    maxDurationMillis == Long.MAX_VALUE ? "no time limit" : ("max " + millisToDuration(maxDurationMillis)));
+                    maxDurationMillis == Long.MAX_VALUE ? "no time limit"
+                            : ("max " + millisToDuration(maxDurationMillis)));
             console.printf("Number of executions: %,d\n", numTrials);
             console.printf("Valid inputs:         %,d (%.2f%%)\n", numValid, numValid * 100.0 / numTrials);
             console.printf("Unique failures:      %,d\n", uniqueFailures.size());
             console.printf("Execution speed:      %,d/sec now | %,d/sec overall\n", intervalExecsPerSec, execsPerSec);
             console.printf("Total coverage:       %,d branches (%.2f%% of map)\n", nonZeroCount, nonZeroFraction);
-            console.printf("Valid coverage:       %,d branches (%.2f%% of map)\n", nonZeroValidCount, nonZeroValidFraction);
+            console.printf("Valid coverage:       %,d branches (%.2f%% of map)\n", nonZeroValidCount,
+                    nonZeroValidFraction);
             console.printf("Unique valid inputs:  %,d (%.2f%%)\n", uniqueValidInputs.size(),
                     uniqueValidInputs.size() * 100.0 / numTrials);
             console.printf("Unique valid paths:   %,d \n", uniquePaths.size());
             console.printf("''  non-zero paths:   %,d \n", uniqueBranchSets.size());
+        } else {
+            System.out.println("Cannot obtain a console instance for the current JVM session.");
         }
 
         String plotData = String.format("%d, %d, %d, %d, %d, %d, %d, %d, %d",
