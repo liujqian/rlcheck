@@ -1,5 +1,5 @@
 #!/bin/bash
-
+JQF_DIR=/home/liujqian/IdeaProjects/rlcheck/jqf
 if [ "$#" -ne 2 ]; then
 	echo "Usage: $0 out_dir num_reps"
 	exit 1

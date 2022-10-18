@@ -115,9 +115,7 @@ public class XmlRLGenerator implements RLGenerator {
         } catch (DOMException e) {
             Assume.assumeNoException(e);
         }
-        String res = XMLDocumentUtils.documentToString(document);
-        System.out.println("XMLRLGenerator generated a string:\n" + res);
-        return res;
+        return XMLDocumentUtils.documentToString(document);
     }
 
     /**
