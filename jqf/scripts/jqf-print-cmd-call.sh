@@ -39,10 +39,10 @@ else
     java="java"
 fi
 
-"$java" -ea \
+echo "-ea \
   -Xbootclasspath/a:"$INST_CLASSPATH" \
   ${JAVAAGENT} \
   -Djanala.conf="${SCRIPT_DIR}/janala.conf" \
   -cp "${FUZZ_CLASSPATH}:${CLASSPATH}" \
   ${JVM_OPTS} \
-  $@
+  $@"
