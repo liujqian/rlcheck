@@ -6,6 +6,7 @@ import edu.berkeley.cs.jqf.fuzz.junit.GuidedFuzzing;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import java.io.BufferedReader;
  * Created by clemieux on 6/17/19.
  */
 public class RLDriver {
+    private static final long MAX_RUN_TIME_SEC = 1;
 
     public static void main(String[] args) {
         // Hardcode the arguments for now.
@@ -38,6 +40,9 @@ public class RLDriver {
                 "jqf/configFiles/strConfig.json",
                 "jqf/output"
         };
+
+        Duration runTime = MAX_RUN_TIME_SEC == 0 ? null : Duration.ofSeconds(MAX_RUN_TIME_SEC);
+
 
         if (args.length < 4) {
             System.err.println("Usage: java " + RLDriver.class + " TEST_CLASS TEST_METHOD GENERATOR_CLASS CONFIG_FILE [OUTPUT_DIR]");
@@ -70,7 +75,7 @@ public class RLDriver {
 
             // Load the guidance
             String title = testClassName + "#" + testMethodName + " (" + genClassName + ")";
-            Guidance guidance = new RLGuidance(gen, title, null, outputDirectory);
+            Guidance guidance = new RLGuidance(gen, title, runTime, outputDirectory);
 
             // Run the Junit test
             GuidedFuzzing.run(testClassName, testMethodName, guidance, System.out);

@@ -23,7 +23,6 @@ public class SimpleStringGenerator implements RLGenerator {
 
     @Override
     public void init(RLParams params) {
-        System.out.println("The init method of SimpleStrGenerator is called!");
         if (params.exists("seed")) {
             guide = new RLGuide((long) params.get("seed"));
         } else {
@@ -37,18 +36,17 @@ public class SimpleStringGenerator implements RLGenerator {
 
     @Override
     public String generate() {
-        System.out.println("SimpleStringGenerator's generate is called!!");
         String[] states = new String[stateSize];
         StringBuilder res = new StringBuilder();
         while (res.length() < MAX_STR_LENGTH && (Boolean) guide.select(states, hasNextLearnerID)) {
             String[] updatedStates = updateState(states, "hasNext=true");
             Object picked = guide.select(updatedStates, charPickingLearnerID);
-            System.out.println("type is " + picked.getClass());
             states = updateState(updatedStates, "pickedChar=" + picked);
             res.append(picked);
         }
-        System.out.println("Generated the string: " + res);
-        return res.toString();
+        String resString = res.toString();
+        System.out.println("SimpleStringGenerator produced: " + resString);
+        return resString;
     }
 
     @Override
