@@ -44,7 +44,7 @@ dir_does_not_exist() {
 
 trap "trap - SIGTERM && killall java && echo 'Terminated' >> $LOG_FILE && exit " SIGINT SIGTERM EXIT
 
-for bench_index in {0..3}; do
+for bench_index in $(seq 0); do
 	BENCHMARK=${BENCHMARKS[$bench_index]}
 	TEST_CLASS=edu.berkeley.cs.jqf.examples.${TEST_CLASSES[$bench_index]}
 	TEST_METHOD_RL=testWithInputStream
@@ -74,7 +74,6 @@ for bench_index in {0..3}; do
 			NEW_CONFIG=${DIRNAME}-${CONFIG_FILE}
 			REPLAYNUM=$(tail -n 1 $DIRNAME/plot_data | awk -F', ' '{print $5}')
 			$JQF_DIR/bin/jqf-rl -N $REPLAYNUM -c $($JQF_DIR/scripts/examples_classpath.sh) $TEST_CLASS $TEST_METHOD_RL $TEST_GEN $NEW_CONFIG $REPLAYNAME &
-
 		        PID=$!
 			wait $PID	
 			ln -s rl-$BENCHMARK-$REP-replay $OUT_DIR/rl-blackbox-$BENCHMARK-$REP-replay

@@ -4,7 +4,7 @@
 pushd `dirname $0` > /dev/null
 SCRIPT_DIR=`pwd`
 popd > /dev/null
-
+# echo "jqf-driver received arguments $@"
 ROOT_DIR=`dirname $SCRIPT_DIR`
 
 # Find JQF classes and JARs
@@ -38,6 +38,14 @@ if [ -n "$JAVA_HOME" ]; then
 else
     java="java"
 fi
+
+# echo "jqf-driver is lauching the following: "$java" -ea \
+#   -Xbootclasspath/a:"$INST_CLASSPATH" \
+#   ${JAVAAGENT} \
+#   -Djanala.conf="${SCRIPT_DIR}/janala.conf" \
+#   -cp "${FUZZ_CLASSPATH}:${CLASSPATH}" \
+#   ${JVM_OPTS} \
+#   $@"
 
 "$java" -ea \
   -Xbootclasspath/a:"$INST_CLASSPATH" \

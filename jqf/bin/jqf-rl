@@ -6,7 +6,7 @@ BIN_DIR=`pwd`
 popd > /dev/null
 
 ROOT_DIR=`dirname $BIN_DIR`
-
+# echo "jqf-rl received arguments $@"
 print_usage() {
   echo "Usage: $0 [-c CLASSPATH] [-N MAX_TRIALS] [-v] [-n] TEST_CLASS TEST_METHOD GENERATOR_CLASS"
 }

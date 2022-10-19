@@ -432,9 +432,7 @@ public class RLGuidance implements Guidance {
                     uniqueValidInputs.size() * 100.0 / numTrials);
             console.printf("Unique valid paths:   %,d \n", uniquePaths.size());
             console.printf("''  non-zero paths:   %,d \n", uniqueBranchSets.size());
-        } else {
-            System.out.println("Cannot obtain a console instance for the current JVM session.");
-        }
+        } 
 
         String plotData = String.format("%d, %d, %d, %d, %d, %d, %d, %d, %d",
                 TimeUnit.MILLISECONDS.toSeconds(now.getTime()), uniqueFailures.size(), nonZeroCount, nonZeroValidCount,

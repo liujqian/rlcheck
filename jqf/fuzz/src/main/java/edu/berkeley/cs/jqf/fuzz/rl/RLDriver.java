@@ -21,6 +21,9 @@ import java.io.BufferedReader;
 public class RLDriver {
 
     public static void main(String[] args) {
+        if (System.console() == null) {
+            System.out.println("Cannot find a console in the current JVM session!");
+        }
         boolean isInDev = null != System.getenv("DEVELOPMENT");
         Duration runTime = null;
         if (isInDev) {
