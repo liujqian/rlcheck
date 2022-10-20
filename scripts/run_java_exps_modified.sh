@@ -1,5 +1,5 @@
 #!/bin/bash
-JQF_DIR=/home/liujqian/IdeaProjects/rlcheck/jqf
+
 if [ "$#" -ne 2 ]; then
 	echo "Usage: $0 out_dir num_reps"
 	exit 1
@@ -22,15 +22,11 @@ touch $LOG_FILE
 echo "Start time: $(date)" > $LOG_FILE
 echo "Experiment settings: writing to $OUT_DIR, doing $NUM_REPS repetitions" >> $LOG_FILE
 
-#BENCHMARKS=(ant maven closure rhino)
-#TEST_CLASSES=(ant.ProjectBuilderTest maven.ModelReaderTest closure.CompilerTest rhino.CompilerTest)
+BENCHMARKS=(ant maven)
+TEST_CLASSES=(ant.ProjectBuilderTest maven.ModelReaderTest)
+TEST_GENS=(edu.berkeley.cs.jqf.examples.xml.XmlRLGenerator edu.berkeley.cs.jqf.examples.xml.XmlRLGenerator)
 
-BENCHMARKS=(maven)
-TEST_CLASSES=(maven.ModelReaderTest)
-
-TEST_GENS=(edu.berkeley.cs.jqf.examples.xml.XmlRLGenerator)
-
-TEST_METHOD_ZEST=(testWithInputStreamGenerator)
+TEST_METHOD_ZEST=(testWithInputStreamGenerator testWithInputStreamGenerator)
 
 
 dir_does_not_exist() {
@@ -44,44 +40,42 @@ dir_does_not_exist() {
 
 trap "trap - SIGTERM && killall java && echo 'Terminated' >> $LOG_FILE && exit " SIGINT SIGTERM EXIT
 
-for bench_index in $(seq 0); do
+for bench_index in {0..1}; do
 	BENCHMARK=${BENCHMARKS[$bench_index]}
 	TEST_CLASS=edu.berkeley.cs.jqf.examples.${TEST_CLASSES[$bench_index]}
 	TEST_METHOD_RL=testWithInputStream
 	TEST_METHOD_ZQC=${TEST_METHOD_ZEST[$bench_index]}
 	TEST_GEN=${TEST_GENS[$bench_index]}
 	CONFIG_FILE=${BENCHMARK}Config.json
-	RUNTIME=5
 	echo "======= Starting benchmark: $BENCHMARK =======" >> $LOG_FILE
 	for REP in $(seq 0 $((NUM_REPS - 1))); do
 		echo "----- REP: $REP (started at $(date)) -----" >> $LOG_FILE
-		
+
 		# First run the blackbox RLCheck
 		DIRNAME=${OUT_DIR}/rl-$BENCHMARK-$REP
 		if  dir_does_not_exist $DIRNAME ; then
 			NEW_CONFIG=${DIRNAME}-${CONFIG_FILE}
 			echo "{\"params\": [ { \"name\":\"seed\", \"type\":\"long\", \"val\": $RANDOM }," > $NEW_CONFIG
 			tail -n+2 $JQF_DIR/configFiles/$CONFIG_FILE >> $NEW_CONFIG
-			timeout $RUNTIME $JQF_DIR/bin/jqf-rl -n -c $($JQF_DIR/scripts/examples_classpath.sh) $TEST_CLASS $TEST_METHOD_RL $TEST_GEN $NEW_CONFIG $DIRNAME &
+			timeout 300 $JQF_DIR/bin/jqf-rl -n -c $($JQF_DIR/scripts/examples_classpath.sh) $TEST_CLASS $TEST_METHOD_RL $TEST_GEN $NEW_CONFIG $DIRNAME &
 		        PID=$!
-			wait $PID	
+			wait $PID
 			ln -s rl-$BENCHMARK-$REP $OUT_DIR/rl-blackbox-$BENCHMARK-$REP
 			echo "[$(date)] Finished regular RLCheck. Staring replay to collect instrumentation data." >> $LOG_FILE
 		fi
-		
+
 		REPLAYNAME=$DIRNAME-replay
 		if  dir_does_not_exist $REPLAYNAME ; then
 			NEW_CONFIG=${DIRNAME}-${CONFIG_FILE}
 			REPLAYNUM=$(tail -n 1 $DIRNAME/plot_data | awk -F', ' '{print $5}')
 			$JQF_DIR/bin/jqf-rl -N $REPLAYNUM -c $($JQF_DIR/scripts/examples_classpath.sh) $TEST_CLASS $TEST_METHOD_RL $TEST_GEN $NEW_CONFIG $REPLAYNAME &
+
 		        PID=$!
-			wait $PID	
+			wait $PID
 			ln -s rl-$BENCHMARK-$REP-replay $OUT_DIR/rl-blackbox-$BENCHMARK-$REP-replay
 			echo "[$(date)] Finished RLCheck replay." >> $LOG_FILE
 		fi
 
-# The following lines are commented out since for my simplified experiments, I do not need to run these.
-#
 #		# Then QuickCheck
 #		DIRNAME=${OUT_DIR}/quickcheck-$BENCHMARK-$REP
 #		if  dir_does_not_exist $DIRNAME ; then

@@ -12,16 +12,14 @@ import org.w3c.dom.Text;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 
 /**
  * Created by clemieux on 6/17/19.
  */
-public class XmlRLGenerator implements RLGenerator {
+public class SequentialStateXmlRLGenerator implements RLGenerator {
 
     private RLGuide guide;
 
@@ -60,13 +58,20 @@ public class XmlRLGenerator implements RLGenerator {
 
 
     private int stateSize;
-    private int boolId;
-    private int textId;
+
+    private int haveChildBoolID;
+    private int haveTextBoolID;
+    private int haveCDATABoolID;
+    private int tagTextID;
+    private int attrKeyTextID;
+    private int attrValTextID;
+    private int textTextID;
+    private int cdataTextID;
     private int numcId;
     private int numaId;
 
     /* Need to initialize with parameters using init method after constructor is called. */
-    public XmlRLGenerator() {
+    public SequentialStateXmlRLGenerator() {
     }
 
     /**
@@ -89,9 +94,18 @@ public class XmlRLGenerator implements RLGenerator {
         List<Object> text = (List<Object>) params.get("tags", true);
 
         this.stateSize = (int) params.get("stateSize", true);
-        System.out.println("The state size for this run is " + this.stateSize);
-        this.textId = guide.addLearner(text, e); // used to select tags, attributes, text, CDATA
-        this.boolId = guide.addLearner(BOOLEANS, e); // used for all booleans
+        System.out.println("The state size for this run is " + stateSize);
+        this.tagTextID = guide.addLearner(text, e);
+        this.attrKeyTextID = guide.addLearner(text, e);
+        this.attrValTextID = guide.addLearner(text, e);
+        this.textTextID = guide.addLearner(text, e);
+        this.cdataTextID = guide.addLearner(text, e);
+
+
+        this.haveCDATABoolID = guide.addLearner(BOOLEANS, e);
+        this.haveChildBoolID = guide.addLearner(BOOLEANS, e);
+        this.haveTextBoolID = guide.addLearner(BOOLEANS, e);
+
         this.numcId = guide.addLearner(NUM_C, e); // num children
         this.numaId = guide.addLearner(NUM_A, e); // num attributes
     }
@@ -141,55 +155,70 @@ public class XmlRLGenerator implements RLGenerator {
      * Recursively generate XML
      */
     private Element generateXmlTree(String[] stateArr, Document document, int depth) {
-        String rootTag = (String) guide.select(stateArr, textId);
+        String rootTag = (String) guide.select(stateArr, tagTextID);
+        updateState(stateArr, "tag=" + rootTag);
 
         Element root = document.createElement(rootTag);
-        stateArr = updateState(stateArr, "tag=" + rootTag);
-
         // Add attributes
         int numAttributes = (Integer) guide.select(stateArr, numaId);
+        updateState(stateArr, "numAttr=" + rootTag);
+
         for (int i = 0; i < numAttributes; i++) {
-            String[] attrState = updateState(stateArr, "attrVal");
-            String attrKey = (String) guide.select(attrState, textId);
-            attrState = updateState(stateArr, "attrKey=" + attrKey);
-            String attrValue = (String) guide.select(attrState, textId);
+            String attrKey = (String) guide.select(stateArr, attrKeyTextID);
+            updateState(stateArr, "attrKey=" + attrKey);
+            String attrValue = (String) guide.select(stateArr, attrValTextID);
+            updateState(stateArr, "attrVal=" + attrKey);
             root.setAttribute(attrKey, attrValue);
         }
-        // Make children recursively or text or CDATA
-        String[] textState = updateState(stateArr, "text");
-        String[] CDATAState = updateState(stateArr, "CDATA");
-        String[] childState = updateState(stateArr, "child");
-        String textVal = null;
-        if (depth < minDepth ||
-                (depth < maxDepth && (boolean) guide.select(childState, boolId))) {
+
+        boolean lessThanMinDepth = depth < minDepth;
+        boolean lessThanMaxDepth = depth < maxDepth;
+        boolean guideSelectHaveChild = false;
+
+        if (!lessThanMinDepth && lessThanMaxDepth) {
+            guideSelectHaveChild = (boolean) guide.select(stateArr, haveChildBoolID);
+            updateState(stateArr, "haveChild=" + guideSelectHaveChild);
+        }
+        boolean haveChild = lessThanMinDepth || (lessThanMaxDepth && guideSelectHaveChild);
+        boolean guideSelectHaveText = false;
+        if (!haveChild) {
+            guideSelectHaveText = (boolean) guide.select(stateArr, haveTextBoolID);
+            updateState(stateArr, "haveText=" + guideSelectHaveText);
+        }
+        boolean guideSelectHaveCDATA = false;
+        if (!haveChild && !guideSelectHaveText) {
+            guideSelectHaveCDATA = (boolean) guide.select(stateArr, haveCDATABoolID);
+            updateState(stateArr, "haveCDATA=" + guideSelectHaveCDATA);
+        }
+
+        if (haveChild) {
             int numChildren = (Integer) guide.select(stateArr, numcId);
+            updateState(stateArr, "numChild=" + numChildren);
             for (int i = 0; i < numChildren; i++) {
                 Element child = generateXmlTree(stateArr, document, depth + 1);
                 if (child != null) {
                     root.appendChild(child);
                 }
             }
-        } else if ((boolean) guide.select(textState, boolId)) {
-            textVal = (String) guide.select(textState, textId);
+        } else if (guideSelectHaveText) {
+            String textVal = (String) guide.select(stateArr, textTextID);
+            updateState(stateArr, "text=" + textVal);
             Text text = document.createTextNode(textVal);
             root.appendChild(text);
-        } else if ((boolean) guide.select(CDATAState, boolId)) {
-            textVal = (String) guide.select(CDATAState, textId);
+        } else if (guideSelectHaveCDATA) {
+            String textVal = (String) guide.select(stateArr, cdataTextID);
+            updateState(stateArr, "CDATA=" + textVal);
             Text text = document.createCDATASection(textVal);
             root.appendChild(text);
         }
         return root;
     }
 
-    /* Update and return new state. Removes items if too long */
-    private String[] updateState(String[] stateArr, String stateX) {
-        String[] newState = new String[stateSize];
+    /* Update the state array in the original array! */
+    private void updateState(String[] stateArr, String stateX) {
         int end = stateSize - 1;
-        newState[end] = stateX;
-        for (int i = 0; i < end; i++) {
-            newState[i] = stateArr[i + 1];
-        }
-        return newState;
+        stateArr[end] = stateX;
+        System.arraycopy(stateArr, 1, stateArr, 0, end);
     }
 }
 
