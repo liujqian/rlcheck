@@ -1,5 +1,5 @@
 #!/bin/bash
-
+export JQF_DIR="/home/liujqian/IdeaProjects/rlcheck/jqf"
 if [ "$#" -ne 2 ]; then
 	echo "Usage: $0 out_dir num_reps"
 	exit 1
@@ -24,7 +24,7 @@ echo "Experiment settings: writing to $OUT_DIR, doing $NUM_REPS repetitions" >> 
 
 BENCHMARKS=(ant maven)
 TEST_CLASSES=(ant.ProjectBuilderTest maven.ModelReaderTest)
-TEST_GENS=(edu.berkeley.cs.jqf.examples.xml.XmlRLGenerator edu.berkeley.cs.jqf.examples.xml.XmlRLGenerator)
+TEST_GENS=(edu.berkeley.cs.jqf.examples.xml.SequentialStateXmlRLGenerator edu.berkeley.cs.jqf.examples.xml.SequentialStateXmlRLGenerator)
 
 TEST_METHOD_ZEST=(testWithInputStreamGenerator testWithInputStreamGenerator)
 

@@ -19,7 +19,7 @@ public class RLGuide implements Guide {
     public static final String stateDelim = " | ";
 
     /** Maps id to learning agent. Used for tracking tables for different action types. */
-    private HashMap<Integer, RLLearner> idToRL;
+    private HashMap<Integer, FirstVisitMonteCarloControlRLLearner> idToRL;
 
     /** Counter for generating ids */
     private int ctr = 0;
@@ -50,7 +50,7 @@ public class RLGuide implements Guide {
     /** With epsilon decay */
     public int addLearner(List<Object> actionSpace, double epsilon, double minEpsilon, double decay) {
         assert !idToRL.containsKey(ctr);
-        RLLearner newLearner = new RLLearner(ctr, actionSpace, epsilon, minEpsilon, decay, rand);
+        FirstVisitMonteCarloControlRLLearner newLearner = new FirstVisitMonteCarloControlRLLearner(ctr, actionSpace, epsilon, minEpsilon, decay, rand);
         idToRL.put(ctr, newLearner);
         return ctr++;
     }
@@ -61,13 +61,13 @@ public class RLGuide implements Guide {
      */
     @Override
     public Object select(List<Object> actions, String state, int id) {
-        RLLearner l = getLearner(id);
+        FirstVisitMonteCarloControlRLLearner l = getLearner(id);
         return l.select(actions, state);
     }
 
     public Object select(List<Object> actions, String[] stateArr, int id) {
         String state = stateToString(stateArr);
-        RLLearner l = getLearner(id);
+        FirstVisitMonteCarloControlRLLearner l = getLearner(id);
         return l.select(actions, state);
     }
 
@@ -75,19 +75,19 @@ public class RLGuide implements Guide {
      * Selects from all possible actions.
      */
     public Object select(String state, int id) {
-        RLLearner l = getLearner(id);
+        FirstVisitMonteCarloControlRLLearner l = getLearner(id);
         return l.select(state);
     }
 
     public Object select(String[] stateArr, int id) {
         String state = stateToString(stateArr);
-        RLLearner l = getLearner(id);
+        FirstVisitMonteCarloControlRLLearner l = getLearner(id);
         return l.select(state);
     }
 
     /** Iteratively updates each learner */
     public void update(int r) {
-        for (RLLearner l : idToRL.values()) {
+        for (FirstVisitMonteCarloControlRLLearner l : idToRL.values()) {
             l.update(r);
             l.episode.clear();
             l.epsilon = Math.min(l.minEpsilon, l.decay * l.epsilon);
@@ -103,7 +103,7 @@ public class RLGuide implements Guide {
     }
 
 
-    private RLLearner getLearner(int id) {
+    private FirstVisitMonteCarloControlRLLearner getLearner(int id) {
         return idToRL.get(id);
     }
 

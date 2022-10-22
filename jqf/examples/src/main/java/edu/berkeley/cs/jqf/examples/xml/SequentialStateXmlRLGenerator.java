@@ -23,7 +23,6 @@ public class SequentialStateXmlRLGenerator implements RLGenerator {
 
     private RLGuide guide;
 
-
     private static DocumentBuilderFactory documentBuilderFactory =
             DocumentBuilderFactory.newInstance();
 
@@ -175,7 +174,7 @@ public class SequentialStateXmlRLGenerator implements RLGenerator {
         boolean lessThanMaxDepth = depth < maxDepth;
         boolean guideSelectHaveChild = false;
 
-        if (!lessThanMinDepth && lessThanMaxDepth) {
+        if ((!lessThanMinDepth) && lessThanMaxDepth) {
             guideSelectHaveChild = (boolean) guide.select(stateArr, haveChildBoolID);
             updateState(stateArr, "haveChild=" + guideSelectHaveChild);
         }
