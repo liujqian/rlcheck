@@ -10,7 +10,7 @@ import java.util.*;
  * And individual learner that learns using Monte Carlo control.
  * Stores our policy and Q-table.
  */
-public class FirstVisitMonteCarloControlRLLearner {
+public class FirstVisitMonteCarloControlRLLearner implements RLLearner {
     double epsilon;
     double decay;
     double minEpsilon;
@@ -22,7 +22,13 @@ public class FirstVisitMonteCarloControlRLLearner {
     /**
      * Stores Q and C values. State maps to map which maps action to (C, Q) pairs.
      */
-    private HashMap<String/*States are key.*/, HashMap/*Key are actions, values are expected values.*/> qcTable;
+    private HashMap<
+            String, // states
+            HashMap<
+                    Object, // actions
+                    AbstractMap.SimpleEntry<Double, Double> // Q-value, count pairs
+                    >
+            > qcTable;
     /**
      * Current episode
      */
@@ -51,7 +57,7 @@ public class FirstVisitMonteCarloControlRLLearner {
     /*
      * MCC update from episode and reward.
      */
-    void update(int r) {
+    public void update(int r) {
         AbstractMap.SimpleEntry<String, Object> saPair;
         AbstractMap.SimpleEntry<Double, Double> qcPair;
         int T = episode.size();
@@ -108,7 +114,7 @@ public class FirstVisitMonteCarloControlRLLearner {
     /**
      * Select from all choices (actionSpace)
      */
-    Object select(String state) {
+    public Object select(String state) {
         return select(actionSpace, state);
     }
 
@@ -127,7 +133,7 @@ public class FirstVisitMonteCarloControlRLLearner {
      */
     private AbstractMap.SimpleEntry<Double, Double>
     QC(String state, Object action) {
-        HashMap<Object, AbstractMap.SimpleEntry> QC_action = get_action_table(state);
+        HashMap<Object, AbstractMap.SimpleEntry<Double, Double>> QC_action = get_action_table(state);
         if (QC_action != null) {
             if (QC_action.containsKey(action)) {
                 return QC_action.get(action);
@@ -139,7 +145,7 @@ public class FirstVisitMonteCarloControlRLLearner {
     /**
      * Returns action table for given state. Returns null if state not found.
      */
-    private HashMap<Object, AbstractMap.SimpleEntry>
+    private HashMap<Object, AbstractMap.SimpleEntry<Double, Double>>
     get_action_table(String state) {
         if (qcTable.containsKey(state)) {
             return qcTable.get(state);
@@ -149,7 +155,7 @@ public class FirstVisitMonteCarloControlRLLearner {
 
     private void updateQC(String state, Object action, Double q, Double c) {
         AbstractMap.SimpleEntry<Double, Double> new_qc = new AbstractMap.SimpleEntry<>(q, c);
-        HashMap<Object, AbstractMap.SimpleEntry> QC_action;
+        HashMap<Object, AbstractMap.SimpleEntry<Double, Double>> QC_action;
         QC_action = get_action_table(state);
         if (QC_action == null) {
             // Table for given state not found

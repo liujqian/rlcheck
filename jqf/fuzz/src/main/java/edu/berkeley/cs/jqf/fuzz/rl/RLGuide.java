@@ -74,11 +74,6 @@ public class RLGuide implements Guide {
     /**
      * Selects from all possible actions.
      */
-    public Object select(String state, int id) {
-        FirstVisitMonteCarloControlRLLearner l = getLearner(id);
-        return l.select(state);
-    }
-
     public Object select(String[] stateArr, int id) {
         String state = stateToString(stateArr);
         FirstVisitMonteCarloControlRLLearner l = getLearner(id);
