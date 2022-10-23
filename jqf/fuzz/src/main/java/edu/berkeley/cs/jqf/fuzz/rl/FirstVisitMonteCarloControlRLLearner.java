@@ -155,8 +155,7 @@ public class FirstVisitMonteCarloControlRLLearner implements RLLearner {
 
     private void updateQC(String state, Object action, Double q, Double c) {
         AbstractMap.SimpleEntry<Double, Double> new_qc = new AbstractMap.SimpleEntry<>(q, c);
-        HashMap<Object, AbstractMap.SimpleEntry<Double, Double>> QC_action;
-        QC_action = get_action_table(state);
+        HashMap<Object, AbstractMap.SimpleEntry<Double, Double>> QC_action = get_action_table(state);
         if (QC_action == null) {
             // Table for given state not found
             // Create action table

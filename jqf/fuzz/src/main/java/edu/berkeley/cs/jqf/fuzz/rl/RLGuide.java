@@ -59,6 +59,7 @@ public class RLGuide implements Guide {
      * Selects action from actions using learner id.
      * It is necessary to create a learner with addLearner before calling select.
      */
+    // Not used
     @Override
     public Object select(List<Object> actions, String state, int id) {
         FirstVisitMonteCarloControlRLLearner l = getLearner(id);
