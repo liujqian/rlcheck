@@ -22,7 +22,7 @@ public class TrieBasedMonteCarloLearnerTest {
     public void test() {
         Random random = new Random();
         random.setSeed(SEED);
-        TrieBasedMonteCarloLearner learner = new TrieBasedMonteCarloLearner(1, random);
+        TrieBasedMonteCarloLearner learner = new TrieBasedMonteCarloLearner(0.25, random);
         Object bool = learner.select(bools);
         System.out.println("The guide first selected " + bool + " from " + bools);
         Object integer = learner.select(ints);
@@ -38,6 +38,24 @@ public class TrieBasedMonteCarloLearnerTest {
         str = learner.select(strs);
         System.out.println("The guide third selected " + str + " from " + strs);
         learner.update(0);
+
+        bool = learner.select(bools);
+        System.out.println("The guide first selected " + bool + " from " + bools);
+        integer = learner.select(ints);
+        System.out.println("The guide second selected " + integer + " from " + ints);
+        str = learner.select(strs);
+        System.out.println("The guide third selected " + str + " from " + strs);
+        learner.update(200);
+
+        bool = learner.select(bools);
+        System.out.println("The guide first selected " + bool + " from " + bools);
+        integer = learner.select(ints);
+        System.out.println("The guide second selected " + integer + " from " + ints);
+        str = learner.select(strs);
+        System.out.println("The guide third selected " + str + " from " + strs);
+        learner.update(200);
+
+
         System.out.println("");
     }
 }

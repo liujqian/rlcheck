@@ -4,7 +4,7 @@
   "val": 1},
   {"name": "stateSize",
     "type": "int",
-    "val": 40},
+    "val": 160},
   {"name": "tags",
     "type": "string_array",
     "val": ["basedir",

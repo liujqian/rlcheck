@@ -36,14 +36,14 @@ public class RLDriver {
             // "jqf/output"
             // };
 
-            args = new String[] {
-                    "edu.berkeley.cs.jqf.examples.str.SimpleStringTest",
-                    "testSimpleStr",
-                    "edu.berkeley.cs.jqf.examples.str.SimpleStringGenerator",
-                    "jqf/configFiles/strConfig.json",
-                    "jqf/output"
+            args = new String[]{
+                    "edu.berkeley.cs.jqf.examples.maven.ModelReaderTest",
+                    "testWithInputStream",
+                    "edu.berkeley.cs.jqf.fuzz.rl.xml.SequentialStateXmlRLGeneratorWithTrieGuide",
+                    "jqf/configFiles/mavenConfig.json",
+                    "jqf/test"
             };
-            final long MAX_RUN_TIME_SEC = 4;
+            final long MAX_RUN_TIME_SEC = 300;
             runTime = Duration.ofSeconds(MAX_RUN_TIME_SEC);
         }
 
@@ -59,7 +59,7 @@ public class RLDriver {
         String configurationFileName = args[3];
         String outputDirectoryName = args.length > 4 ? args[4] : "fuzz-results";
         System.out.printf(
-                "testClassNames: %s, testMethodName: %s, generatorClassName: %s, configurationFileName: %s, outputDirectoryName: %s",
+                "testClassNames: %s, testMethodName: %s, generatorClassName: %s, configurationFileName: %s, outputDirectoryName: %s\n",
                 testClassName, testMethodName, genClassName, configurationFileName, outputDirectoryName);
         File outputDirectory = new File(outputDirectoryName);
         try {
@@ -69,7 +69,6 @@ public class RLDriver {
 
             // Load the generator
             Class<?> clazz = Class.forName(genClassName);
-            System.out.println(clazz.toString());
             Constructor<?> ctor = clazz.getConstructor();
             System.out.println(ctor);
             RLGenerator gen = (RLGenerator) ctor.newInstance();

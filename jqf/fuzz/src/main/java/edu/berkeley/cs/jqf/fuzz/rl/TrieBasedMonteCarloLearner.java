@@ -51,9 +51,7 @@ class State {
     public State(Action previousAction, double episilon) {
         this.previousAction = previousAction;
         this.actions = new HashMap<>();
-//        this.highestValuedActions = new ArrayList<>();
         this.episilon = episilon;
-//        this.curMaxQ = 0;
         this.random = new Random();
     }
 
@@ -68,7 +66,11 @@ class State {
     }
 
     public State select(List<Object> options) {
-        if (random.nextDouble() < this.episilon || this.actions.isEmpty() /*|| highestValuedActions.size() == 0*/) {
+        if (options.isEmpty()) {
+            System.err.println("An empty options list is passed into the select method!");
+            System.exit(1);
+        }
+        if (random.nextDouble() < this.episilon || this.actions.isEmpty()) {
             int index = ((int) (random.nextDouble() * 1000.0)) % options.size();
             Object choice = options.get(index);
             if (this.actions.containsKey(choice)) {
@@ -80,6 +82,10 @@ class State {
             }
         } else {
             Action curMaxAction = this.actions.values().stream().reduce((a, b) -> a.getQ() > b.getQ() ? a : b).get();
+            if (!curMaxAction.getAction().getClass().equals(options.get(0).getClass())) {
+                System.err.println("The passed in options have a different type from the selected action: " + curMaxAction.getAction().getClass().toString() + " " + curMaxAction.getAction().getClass().toString());
+                System.exit(1);
+            }
             return curMaxAction.getNextState();
         }
     }
@@ -87,22 +93,6 @@ class State {
     public Action getPreviousAction() {
         return previousAction;
     }
-
-//    public double getCurMaxQ() {
-//        return curMaxQ;
-//    }
-//
-//    public void setCurMaxQ(double curMaxQ) {
-//        this.curMaxQ = curMaxQ;
-//    }
-//
-//    public void setHighestValuedActions(List highestValuedActions) {
-//        this.highestValuedActions = highestValuedActions;
-//    }
-//
-//    public List getHighestValuedActions() {
-//        return highestValuedActions;
-//    }
 }
 
 class Action {
@@ -144,13 +134,5 @@ class Action {
     public void update(int r) {
         this.count += 1;
         this.Q = this.Q + (1.0 / this.count) * (r - this.Q);
-//        double currentStateMaxQ = this.currentState.getCurMaxQ();
-//        if (this.Q >= currentStateMaxQ) {
-//            if (this.Q > currentStateMaxQ) {
-//                this.currentState.setHighestValuedActions(new ArrayList<>());
-//                this.currentState.setCurMaxQ(this.Q);
-//            }
-//            this.currentState.getHighestValuedActions().add(this.action);
-//        }
     }
 }
