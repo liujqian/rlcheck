@@ -37,10 +37,10 @@ public class RLDriver {
             // };
 
             args = new String[]{
-                    "edu.berkeley.cs.jqf.examples.maven.ModelReaderTest",
-                    "testWithInputStream",
-                    "edu.berkeley.cs.jqf.fuzz.rl.xml.SequentialStateXmlRLGeneratorWithTrieGuide",
-                    "jqf/configFiles/mavenConfig.json",
+                    "edu.berkeley.cs.jqf.examples.rhino.CompilerTest",
+                    "testWithGenerator",
+                    "edu.berkeley.cs.jqf.fuzz.rl.js.JavaScriptRLGeneratorWithTrieGuide",
+                    "jqf/configFiles/rhinoConfig.json",
                     "jqf/test"
             };
             final long MAX_RUN_TIME_SEC = 300;

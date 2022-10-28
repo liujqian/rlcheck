@@ -3,9 +3,10 @@ import numpy as np
 
 
 class DataLoader:
+    # generators = ['quickcheck', 'zest', 'rl']
+    # validity = ['ant', 'maven', 'closure', 'rhino']
     generators = ['rl']
-    validity = ['ant', 'maven', ]
-
+    validity = ['maven','closure', 'rhino']
     sm = {
         0: 'unix_time',
         1: 'unique_crashes',

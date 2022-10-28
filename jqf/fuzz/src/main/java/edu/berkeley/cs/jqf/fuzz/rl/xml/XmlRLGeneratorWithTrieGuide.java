@@ -21,7 +21,7 @@ import java.util.Random;
 /**
  * Created by clemieux on 6/17/19.
  */
-public class SequentialStateXmlRLGeneratorWithTrieGuide implements RLGenerator {
+public class XmlRLGeneratorWithTrieGuide implements RLGenerator {
     TrieBasedMonteCarloLearner learner;
     private static DocumentBuilderFactory documentBuilderFactory =
             DocumentBuilderFactory.newInstance();
@@ -57,7 +57,7 @@ public class SequentialStateXmlRLGeneratorWithTrieGuide implements RLGenerator {
     private  List<Object> TAGS = null;
 
     /* Need to initialize with parameters using init method after constructor is called. */
-    public SequentialStateXmlRLGeneratorWithTrieGuide() {
+    public XmlRLGeneratorWithTrieGuide() {
     }
 
     /**
