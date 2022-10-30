@@ -1,8 +1,7 @@
 package edu.berkeley.cs.jqf.fuzz;
 
 
-import edu.berkeley.cs.jqf.fuzz.rl.TrieBasedMonteCarloLearner;
-import org.junit.Assert;
+import edu.berkeley.cs.jqf.fuzz.rl.experiments.TrieBasedMonteCarloLearner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;

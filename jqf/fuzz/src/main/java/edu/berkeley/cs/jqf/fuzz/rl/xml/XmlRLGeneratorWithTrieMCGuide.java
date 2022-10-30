@@ -1,8 +1,9 @@
-package edu.berkeley.cs.jqf.examples.xml;
+package edu.berkeley.cs.jqf.fuzz.rl.xml;
 
 import edu.berkeley.cs.jqf.fuzz.rl.RLGenerator;
 import edu.berkeley.cs.jqf.fuzz.rl.RLGuide;
 import edu.berkeley.cs.jqf.fuzz.rl.RLParams;
+import edu.berkeley.cs.jqf.fuzz.rl.experiments.TrieBasedMonteCarloLearner;
 import org.junit.Assume;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -12,20 +13,16 @@ import org.w3c.dom.Text;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 
 /**
  * Created by clemieux on 6/17/19.
  */
-public class XmlRLGenerator implements RLGenerator {
-
-    private RLGuide guide;
-
-
+public class XmlRLGeneratorWithTrieMCGuide implements RLGenerator {
+    TrieBasedMonteCarloLearner learner;
     private static DocumentBuilderFactory documentBuilderFactory =
             DocumentBuilderFactory.newInstance();
 
@@ -57,16 +54,10 @@ public class XmlRLGenerator implements RLGenerator {
     private final List<Object> BOOLEANS = Arrays.asList(new Boolean[]{true, false});
     private final List<Object> NUM_C = Arrays.asList(RLGuide.range(0, MAX_NUM_CHILDREN));
     private final List<Object> NUM_A = Arrays.asList(RLGuide.range(0, MAX_NUM_ATTRIBUTES));
-
-
-    private int stateSize;
-    private int boolId;
-    private int textId;
-    private int numcId;
-    private int numaId;
+    private  List<Object> TAGS = null;
 
     /* Need to initialize with parameters using init method after constructor is called. */
-    public XmlRLGenerator() {
+    public XmlRLGeneratorWithTrieMCGuide() {
     }
 
     /**
@@ -79,21 +70,14 @@ public class XmlRLGenerator implements RLGenerator {
      */
     @Override
     public void init(RLParams params) {
-        System.out.println("init of XMLRLGenerator is called!");
-        if (params.exists("seed")) {
-            guide = new RLGuide((long) params.get("seed"));
-        } else {
-            guide = new RLGuide();
-        }
+        System.out.println("The \"init\" method of SequentialStateXmlRLGeneratorWithTrieGuide is called!");
         double e = (double) params.get("defaultEpsilon", true);
-        List<Object> text = (List<Object>) params.get("tags", true);
-
-        this.stateSize = (int) params.get("stateSize", true);
-        System.out.println("The state size for this run is " + this.stateSize);
-        this.textId = guide.addLearner(text, e); // used to select tags, attributes, text, CDATA
-        this.boolId = guide.addLearner(BOOLEANS, e); // used for all booleans
-        this.numcId = guide.addLearner(NUM_C, e); // num children
-        this.numaId = guide.addLearner(NUM_A, e); // num attributes
+        if (params.exists("seed")) {
+            learner = new TrieBasedMonteCarloLearner(e, new Random((long) params.get("seed")));
+        } else {
+            learner = new TrieBasedMonteCarloLearner(e);
+        }
+       TAGS = (List<Object>) params.get("tags", true);
     }
 
     /**
@@ -124,13 +108,11 @@ public class XmlRLGenerator implements RLGenerator {
      */
     @Override
     public void update(int r) {
-        guide.update(r);
+        learner.update(r);
     }
 
-
     private Document populateDocument(Document document) {
-        String[] stateArr = new String[stateSize];
-        Element root = generateXmlTree(stateArr, document, 0);
+        Element root = generateXmlTree(document, 0);
         if (root != null) {
             document.appendChild(root);
         }
@@ -140,56 +122,54 @@ public class XmlRLGenerator implements RLGenerator {
     /**
      * Recursively generate XML
      */
-    private Element generateXmlTree(String[] stateArr, Document document, int depth) {
-        String rootTag = (String) guide.select(stateArr, textId);
+    private Element generateXmlTree(Document document, int depth) {
+        String rootTag = (String) learner.select(TAGS);
 
         Element root = document.createElement(rootTag);
-        stateArr = updateState(stateArr, "tag=" + rootTag);
-
         // Add attributes
-        int numAttributes = (Integer) guide.select(stateArr, numaId);
+        int numAttributes = (Integer) learner.select(NUM_A);
+
         for (int i = 0; i < numAttributes; i++) {
-            String[] attrState = updateState(stateArr, "attrVal");
-            String attrKey = (String) guide.select(attrState, textId);
-            attrState = updateState(stateArr, "attrKey=" + attrKey);
-            String attrValue = (String) guide.select(attrState, textId);
+            String attrKey = (String) learner.select(TAGS);
+            String attrValue = (String) learner.select(TAGS);
             root.setAttribute(attrKey, attrValue);
         }
-        // Make children recursively or text or CDATA
-        String[] textState = updateState(stateArr, "text");
-        String[] CDATAState = updateState(stateArr, "CDATA");
-        String[] childState = updateState(stateArr, "child");
-        String textVal = null;
-        if (depth < minDepth ||
-                (depth < maxDepth && (boolean) guide.select(childState, boolId))) {
-            int numChildren = (Integer) guide.select(stateArr, numcId);
+
+        boolean lessThanMinDepth = depth < minDepth;
+        boolean lessThanMaxDepth = depth < maxDepth;
+        boolean guideSelectHaveChild = false;
+
+        if ((!lessThanMinDepth) && lessThanMaxDepth) {
+            guideSelectHaveChild = (boolean) learner.select(BOOLEANS);
+        }
+        boolean haveChild = lessThanMinDepth || (lessThanMaxDepth && guideSelectHaveChild);
+        boolean guideSelectHaveText = false;
+        if (!haveChild) {
+            guideSelectHaveText = (boolean) learner.select(BOOLEANS);
+        }
+        boolean guideSelectHaveCDATA = false;
+        if (!haveChild && !guideSelectHaveText) {
+            guideSelectHaveCDATA = (boolean) learner.select(BOOLEANS);
+        }
+
+        if (haveChild) {
+            int numChildren = (Integer) learner.select(NUM_C);
             for (int i = 0; i < numChildren; i++) {
-                Element child = generateXmlTree(stateArr, document, depth + 1);
+                Element child = generateXmlTree(document, depth + 1);
                 if (child != null) {
                     root.appendChild(child);
                 }
             }
-        } else if ((boolean) guide.select(textState, boolId)) {
-            textVal = (String) guide.select(textState, textId);
+        } else if (guideSelectHaveText) {
+            String textVal = (String) learner.select(TAGS);
             Text text = document.createTextNode(textVal);
             root.appendChild(text);
-        } else if ((boolean) guide.select(CDATAState, boolId)) {
-            textVal = (String) guide.select(CDATAState, textId);
+        } else if (guideSelectHaveCDATA) {
+            String textVal = (String) learner.select(TAGS);
             Text text = document.createCDATASection(textVal);
             root.appendChild(text);
         }
         return root;
-    }
-
-    /* Update and return new state. Removes items if too long */
-    private String[] updateState(String[] stateArr, String stateX) {
-        String[] newState = new String[stateSize];
-        int end = stateSize - 1;
-        newState[end] = stateX;
-        for (int i = 0; i < end; i++) {
-            newState[i] = stateArr[i + 1];
-        }
-        return newState;
     }
 }
 

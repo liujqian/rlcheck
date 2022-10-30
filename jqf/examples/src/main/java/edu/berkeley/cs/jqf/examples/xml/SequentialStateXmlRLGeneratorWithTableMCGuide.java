@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Created by clemieux on 6/17/19.
  */
-public class SequentialStateXmlRLGenerator implements RLGenerator {
+public class SequentialStateXmlRLGeneratorWithTableMCGuide implements RLGenerator {
 
     private RLGuide guide;
 
@@ -70,7 +70,7 @@ public class SequentialStateXmlRLGenerator implements RLGenerator {
     private int numaId;
 
     /* Need to initialize with parameters using init method after constructor is called. */
-    public SequentialStateXmlRLGenerator() {
+    public SequentialStateXmlRLGeneratorWithTableMCGuide() {
     }
 
     /**

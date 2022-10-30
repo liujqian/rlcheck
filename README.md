@@ -22,7 +22,7 @@ You should then be able to run the following command:
 ```$JQF_DIR/bin/jqf-rl -c [CLASSPATH] TEST_CLASS TEST_METHOD RL_GENERATOR CONFIG_FILE [OUTPUT_DIR]```
 
 Where $JQF_DIR is the location of the `jqf` subdirectory of RLCheck. For example, to run 
-```$JQF_DIR/bin/jqf-rl -c $($JQF_DIR/scripts/examples_classpath.sh) edu.berkeley.cs.jqf.examples.maven.ModelReaderTest testWithInputStream edu.berkeley.cs.jqf.examples.xml.XmlRLGenerator $JQF_DIR/configFiles/mavenConfig.json [OUTPUT_DIR]```
+```$JQF_DIR/bin/jqf-rl -c $($JQF_DIR/scripts/examples_classpath.sh) edu.berkeley.cs.jqf.examples.maven.ModelReaderTest testWithInputStream edu.berkeley.cs.jqf.examples.xml.ChildOnlyXmlRLGeneratorWithTableMCGuide $JQF_DIR/configFiles/mavenConfig.json [OUTPUT_DIR]```
 
 **Note**: these commands run the *instrumented* version of RLCheck. While this results in a nice status screen, it also can cause substantial slowdowns on some benchmark. Add the `-n` flag to run an uninstrumented session (no status on increases in coverage, but faster execution), e.g.: `$JQF_DIR/bin/jqf-rl -n -c [CLASSPATH] ...`
 
