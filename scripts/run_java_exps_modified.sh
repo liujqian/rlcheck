@@ -23,10 +23,10 @@ echo "Start time: $(date)" > $LOG_FILE
 echo "Experiment settings: writing to $OUT_DIR, doing $NUM_REPS repetitions" >> $LOG_FILE
 
 BENCHMARKS=(ant maven)
-TEST_CLASSES=(ant.ProjectBuilderTest maven.ModelReaderTest)
+TEST_CLASSES=(ant.ProjectBuilderTest maven.ModelReaderTest )
 TEST_GENS=(edu.berkeley.cs.jqf.examples.xml.SequentialStateXmlRLGenerator edu.berkeley.cs.jqf.examples.xml.SequentialStateXmlRLGenerator)
 
-TEST_METHOD_ZEST=(testWithInputStreamGenerator testWithInputStreamGenerator)
+TEST_METHOD_ZEST=(testWithInputStreamGenerator testWithInputStreamGenerator )
 
 
 dir_does_not_exist() {
@@ -52,29 +52,29 @@ for bench_index in {0..1}; do
 		echo "----- REP: $REP (started at $(date)) -----" >> $LOG_FILE
 
 		# First run the blackbox RLCheck
-		DIRNAME=${OUT_DIR}/rl-$BENCHMARK-$REP
-		if  dir_does_not_exist $DIRNAME ; then
-			NEW_CONFIG=${DIRNAME}-${CONFIG_FILE}
-			echo "{\"params\": [ { \"name\":\"seed\", \"type\":\"long\", \"val\": $RANDOM }," > $NEW_CONFIG
-			tail -n+2 $JQF_DIR/configFiles/$CONFIG_FILE >> $NEW_CONFIG
-			timeout 300 $JQF_DIR/bin/jqf-rl -n -c $($JQF_DIR/scripts/examples_classpath.sh) $TEST_CLASS $TEST_METHOD_RL $TEST_GEN $NEW_CONFIG $DIRNAME &
-		        PID=$!
-			wait $PID
-			ln -s rl-$BENCHMARK-$REP $OUT_DIR/rl-blackbox-$BENCHMARK-$REP
-			echo "[$(date)] Finished regular RLCheck. Staring replay to collect instrumentation data." >> $LOG_FILE
-		fi
+		# DIRNAME=${OUT_DIR}/rl-$BENCHMARK-$REP
+		# if  dir_does_not_exist $DIRNAME ; then
+		# 	NEW_CONFIG=${DIRNAME}-${CONFIG_FILE}
+		# 	echo "{\"params\": [ { \"name\":\"seed\", \"type\":\"long\", \"val\": $RANDOM }," > $NEW_CONFIG
+		# 	tail -n+2 $JQF_DIR/configFiles/$CONFIG_FILE >> $NEW_CONFIG
+		# 	timeout 300 $JQF_DIR/bin/jqf-rl -n -c $($JQF_DIR/scripts/examples_classpath.sh) $TEST_CLASS $TEST_METHOD_RL $TEST_GEN $NEW_CONFIG $DIRNAME &
+		#         PID=$!
+		# 	wait $PID
+		# 	ln -s rl-$BENCHMARK-$REP $OUT_DIR/rl-blackbox-$BENCHMARK-$REP
+		# 	echo "[$(date)] Finished regular RLCheck. Staring replay to collect instrumentation data." >> $LOG_FILE
+		# fi
 
-		REPLAYNAME=$DIRNAME-replay
-		if  dir_does_not_exist $REPLAYNAME ; then
-			NEW_CONFIG=${DIRNAME}-${CONFIG_FILE}
-			REPLAYNUM=$(tail -n 1 $DIRNAME/plot_data | awk -F', ' '{print $5}')
-			$JQF_DIR/bin/jqf-rl -N $REPLAYNUM -c $($JQF_DIR/scripts/examples_classpath.sh) $TEST_CLASS $TEST_METHOD_RL $TEST_GEN $NEW_CONFIG $REPLAYNAME &
+		# REPLAYNAME=$DIRNAME-replay
+		# if  dir_does_not_exist $REPLAYNAME ; then
+		# 	NEW_CONFIG=${DIRNAME}-${CONFIG_FILE}
+		# 	REPLAYNUM=$(tail -n 1 $DIRNAME/plot_data | awk -F', ' '{print $5}')
+		# 	$JQF_DIR/bin/jqf-rl -N $REPLAYNUM -c $($JQF_DIR/scripts/examples_classpath.sh) $TEST_CLASS $TEST_METHOD_RL $TEST_GEN $NEW_CONFIG $REPLAYNAME &
 
-		        PID=$!
-			wait $PID
-			ln -s rl-$BENCHMARK-$REP-replay $OUT_DIR/rl-blackbox-$BENCHMARK-$REP-replay
-			echo "[$(date)] Finished RLCheck replay." >> $LOG_FILE
-		fi
+		#         PID=$!
+		# 	wait $PID
+		# 	ln -s rl-$BENCHMARK-$REP-replay $OUT_DIR/rl-blackbox-$BENCHMARK-$REP-replay
+		# 	echo "[$(date)] Finished RLCheck replay." >> $LOG_FILE
+		# fi
 
 #		# Then QuickCheck
 #		DIRNAME=${OUT_DIR}/quickcheck-$BENCHMARK-$REP
@@ -102,15 +102,15 @@ for bench_index in {0..1}; do
 #			echo "[$(date)] Finished Zest. No need to replay." >> $LOG_FILE
 #		fi
 #
-#		# Finally, greybox RLCheck
-#		DIRNAME=${OUT_DIR}/rl-greybox-$BENCHMARK-$REP
-#		if  dir_does_not_exist $DIRNAME ; then
-#			CONFIG=$JQF_DIR/configFiles/$CONFIG_FILE
-#			JVM_OPTS="$JVM_OPTS -Drl.guidance.USE_GREYBOX=true" timeout 300 $JQF_DIR/bin/jqf-rl -c $($JQF_DIR/scripts/examples_classpath.sh) $TEST_CLASS $TEST_METHOD_RL $TEST_GEN $CONFIG $DIRNAME &
-#		        PID=$!
-#			wait $PID
-#			echo "[$(date)] Finished Greybox RLCheck. No need to replay." >> $LOG_FILE
-#		fi
+		# Finally, greybox RLCheck
+		DIRNAME=${OUT_DIR}/rl-greybox-$BENCHMARK-$REP
+		if  dir_does_not_exist $DIRNAME ; then
+			CONFIG=$JQF_DIR/configFiles/$CONFIG_FILE
+			JVM_OPTS="$JVM_OPTS -Drl.guidance.USE_GREYBOX=true" timeout 300 $JQF_DIR/bin/jqf-rl -c $($JQF_DIR/scripts/examples_classpath.sh) $TEST_CLASS $TEST_METHOD_RL $TEST_GEN $CONFIG $DIRNAME &
+		        PID=$!
+			wait $PID
+			echo "[$(date)] Finished Greybox RLCheck. No need to replay." >> $LOG_FILE
+		fi
 
 	done # Done rep
 done # Done bench

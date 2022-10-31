@@ -4,7 +4,7 @@
     "val": 10},
   {"name": "stateSize",
     "type": "int",
-    "val": 10},
+    "val": 160},
   {"name": "tags",
     "type": "string_array",
     "val": ["activation",

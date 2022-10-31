@@ -1,10 +1,6 @@
 package edu.berkeley.cs.jqf.fuzz.rl.experiments;
 
-import java.net.Inet4Address;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class TrieBasedSarsaLearner {
     State rootState;
@@ -13,21 +9,22 @@ public class TrieBasedSarsaLearner {
 
     double gamma;
 
-    public TrieBasedSarsaLearner(double episilon, double alpha, double gamma) {
-        this.rootState = new TrieBasedSarsaLearner.State(null, episilon);
+    public TrieBasedSarsaLearner(double episilon, double alpha, double gamma, Random random) {
+        if (random == null) {
+            random = new Random();
+        }
+        this.rootState = new TrieBasedSarsaLearner.State(null, episilon, random);
+        this.rootState.select(Collections.singletonList("begin"), null);
         this.currentState = rootState;
         this.alpha = alpha;
         this.gamma = gamma;
     }
 
-    public Object chooseAction(List<Object> options) {
+    public Object select(List<Object> options) {
         return this.chooseAction(options, null);
     }
 
     public Object chooseAction(List<Object> options, Integer forceSelectIndex) {
-        if (currentState == rootState) {
-            Object selected = currentState.select(options, forceSelectIndex);
-        }
         Action a = currentState.selectedAction;
         State sapostrophy = a.nextState;
         Action aapostrophy = sapostrophy.select(options, forceSelectIndex);
@@ -38,10 +35,13 @@ public class TrieBasedSarsaLearner {
     }
 
     public void update(double r) {
-        this.currentState.selectedAction = null;
-        Action actionLedToFinalState = this.currentState.previousAction;
+        Action actionLedToFinalState = this.currentState.selectedAction;
         actionLedToFinalState.updateQ(actionLedToFinalState.getOldQ() + alpha * (r + 0 - actionLedToFinalState.getOldQ()));
-        this.currentState = rootState; // reset
+        while (this.currentState != this.rootState){
+            currentState.selectedAction = null;
+            Action prevAction  = currentState.previousAction;
+            currentState = prevAction.currentState;
+        }
     }
 
     static class Action {
@@ -67,6 +67,15 @@ public class TrieBasedSarsaLearner {
             this.currentState = currentState;
         }
 
+        public State getCurrentState() {
+            return currentState;
+        }
+
+        @Override
+        public String toString() {
+            return action.toString();
+        }
+
         public double getQ() {
             return Q;
         }
@@ -78,6 +87,11 @@ public class TrieBasedSarsaLearner {
         private Random random;
         private final Action previousAction; // if I am a root state, this field is null.
         private Action selectedAction;
+
+        @Override
+        public String toString() {
+            return previousAction == null ? "* " : previousAction.getCurrentState().toString() + "| " + previousAction + " ";
+        }
 
         public State(Action previousAction, double episilon) {
             this.previousAction = previousAction;

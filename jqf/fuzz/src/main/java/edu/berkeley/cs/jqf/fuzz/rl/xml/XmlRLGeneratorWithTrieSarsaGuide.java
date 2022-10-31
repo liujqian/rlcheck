@@ -1,9 +1,11 @@
 package edu.berkeley.cs.jqf.fuzz.rl.xml;
 
+
 import edu.berkeley.cs.jqf.fuzz.rl.RLGenerator;
 import edu.berkeley.cs.jqf.fuzz.rl.RLGuide;
 import edu.berkeley.cs.jqf.fuzz.rl.RLParams;
 import edu.berkeley.cs.jqf.fuzz.rl.experiments.TrieBasedMonteCarloLearner;
+import edu.berkeley.cs.jqf.fuzz.rl.experiments.TrieBasedSarsaLearner;
 import org.junit.Assume;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -17,12 +19,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-
-/**
- * Created by clemieux on 6/17/19.
- */
-public class XmlRLGeneratorWithTrieMCGuide implements RLGenerator {
-    TrieBasedMonteCarloLearner learner;
+public class XmlRLGeneratorWithTrieSarsaGuide implements RLGenerator {
+    TrieBasedSarsaLearner learner;
     private static DocumentBuilderFactory documentBuilderFactory =
             DocumentBuilderFactory.newInstance();
 
@@ -54,10 +52,10 @@ public class XmlRLGeneratorWithTrieMCGuide implements RLGenerator {
     private final List<Object> BOOLEANS = Arrays.asList(new Boolean[]{true, false});
     private final List<Object> NUM_C = Arrays.asList(RLGuide.range(0, MAX_NUM_CHILDREN));
     private final List<Object> NUM_A = Arrays.asList(RLGuide.range(0, MAX_NUM_ATTRIBUTES));
-    private  List<Object> TAGS = null;
+    private List<Object> TAGS = null;
 
     /* Need to initialize with parameters using init method after constructor is called. */
-    public XmlRLGeneratorWithTrieMCGuide() {
+    public XmlRLGeneratorWithTrieSarsaGuide() {
     }
 
     /**
@@ -73,11 +71,11 @@ public class XmlRLGeneratorWithTrieMCGuide implements RLGenerator {
         System.out.println("The \"init\" method of SequentialStateXmlRLGeneratorWithTrieGuide is called!");
         double e = (double) params.get("defaultEpsilon", true);
         if (params.exists("seed")) {
-            learner = new TrieBasedMonteCarloLearner(e, new Random((long) params.get("seed")));
+            learner = new TrieBasedSarsaLearner(e, 0.5, 1, new Random((long) params.get("seed")));
         } else {
-            learner = new TrieBasedMonteCarloLearner(e);
+            learner = new TrieBasedSarsaLearner(e, 0.5, 1, null);
         }
-       TAGS = (List<Object>) params.get("tags", true);
+        TAGS = (List<Object>) params.get("tags", true);
     }
 
     /**

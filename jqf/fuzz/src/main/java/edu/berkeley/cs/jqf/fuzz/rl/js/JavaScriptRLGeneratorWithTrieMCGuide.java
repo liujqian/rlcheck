@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.function.Supplier;
 
 
-public class JavaScriptRLGeneratorWithTrieGuide implements RLGenerator {
+public class JavaScriptRLGeneratorWithTrieMCGuide implements RLGenerator {
 
     private TrieBasedMonteCarloLearner learner;
     private static final int MAX_IDENTIFIERS = 50;
@@ -67,7 +67,7 @@ public class JavaScriptRLGeneratorWithTrieGuide implements RLGenerator {
     private List<Object> bools;
     private List<Object> ascii;
 
-    public JavaScriptRLGeneratorWithTrieGuide() {
+    public JavaScriptRLGeneratorWithTrieMCGuide() {
     }
 
     /**
