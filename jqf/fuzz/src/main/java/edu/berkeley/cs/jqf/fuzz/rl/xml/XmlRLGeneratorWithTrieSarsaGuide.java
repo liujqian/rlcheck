@@ -71,9 +71,9 @@ public class XmlRLGeneratorWithTrieSarsaGuide implements RLGenerator {
         System.out.println("The \"init\" method of SequentialStateXmlRLGeneratorWithTrieGuide is called!");
         double e = (double) params.get("defaultEpsilon", true);
         if (params.exists("seed")) {
-            learner = new TrieBasedSarsaLearner(e, 0.5, 1, new Random((long) params.get("seed")));
+            learner = new TrieBasedSarsaLearner(e, 0.75, 1, new Random((long) params.get("seed")));
         } else {
-            learner = new TrieBasedSarsaLearner(e, 0.5, 1, null);
+            learner = new TrieBasedSarsaLearner(e, 0.75, 1, null);
         }
         TAGS = (List<Object>) params.get("tags", true);
     }
