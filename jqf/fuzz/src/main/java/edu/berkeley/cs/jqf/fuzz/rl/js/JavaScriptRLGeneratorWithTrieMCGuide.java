@@ -79,17 +79,21 @@ public class JavaScriptRLGeneratorWithTrieMCGuide implements RLGenerator {
      */
     public void init(RLParams params) {
         double e = (double) params.get("defaultEpsilon", true);
-        if (params.exists("seed")) {
-            learner = new TrieBasedMonteCarloLearner(e, new Random((long) params.get("seed")));
-        } else {
-            learner = new TrieBasedMonteCarloLearner(e);
+        boolean useBonus = false;
+        if (params.exists("explorationBonus")) {
+            useBonus = true;
         }
-
+        if (params.exists("seed")) {
+            learner = new TrieBasedMonteCarloLearner(e, new Random((long) params.get("seed")),useBonus);
+        } else {
+            learner = new TrieBasedMonteCarloLearner(e,useBonus);
+        }
         ints = Arrays.asList(RLGuide.range(MIN_INT, MAX_INT + 1));
         bools = Arrays.asList(BOOLEANS);
         ascii = new ArrayList<>(26);
         for (char c = 'A'; c <= 'Z'; c++)
             ascii.add(String.valueOf(c));
+        System.out.println("The \"init\" method of JavaScriptRLGeneratorWithTrieMCGuide is called! useBonus is " + useBonus + "!");
     }
 
     /**

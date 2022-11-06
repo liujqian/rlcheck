@@ -126,5 +126,8 @@
       "zip"]},
  {"name": "defaultEpsilon",
   "type": "double",
-  "val": 0.25}
+  "val": 0.25},
+  {"name": "explorationBonus",
+    "type": "int",
+    "val": 1}
 ]}

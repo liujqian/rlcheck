@@ -8,18 +8,17 @@ import java.util.Random;
 public class TrieBasedMonteCarloLearner {
     private State rootState;
     private State currentState;
+    private boolean useExplorationBonus;
 
-    public TrieBasedMonteCarloLearner(double episilon) {
-        this.rootState = new State(null, episilon);
+    public TrieBasedMonteCarloLearner(double episilon, boolean useExplorationBonus) {
+        this.useExplorationBonus = useExplorationBonus;
+        this.rootState = new State(null, episilon, 1);
         this.currentState = rootState;
     }
 
-    public State getCurrentState() {
-        return currentState;
-    }
-
-    public TrieBasedMonteCarloLearner(double episilon, Random random) {
-        this.rootState = new State(null, episilon, random);
+    public TrieBasedMonteCarloLearner(double episilon, Random random, boolean useExplorationBonus) {
+        this.useExplorationBonus = useExplorationBonus;
+        this.rootState = new State(null, episilon, random, 1);
         this.currentState = rootState;
     }
 
@@ -29,9 +28,17 @@ public class TrieBasedMonteCarloLearner {
     }
 
     public void update(int r) {
+        boolean metNewValid = r == 20;
         while (currentState.getPreviousAction() != null) {
             Action previousAction = currentState.getPreviousAction();
-            previousAction.update(r);
+
+            double updateVal = r;
+            if (useExplorationBonus && metNewValid && !previousAction.hasMetValid) {
+                previousAction.hasMetValid = true;
+                updateVal = updateVal + 10 * Math.pow(0.7, previousAction.getCurrentState().depth);
+            }
+
+            previousAction.update(updateVal);
             currentState = previousAction.getCurrentState();
         }
     }
@@ -47,12 +54,15 @@ public class TrieBasedMonteCarloLearner {
         private State currentState;
         private Object action;
 
+        private boolean hasMetValid;
+
         public Action(Object action, double episilon, State currentState, Random random) {
             this.count = 0;
             this.Q = 0;
             this.action = action;
-            this.nextState = new State(this, episilon, random);
+            this.nextState = new State(this, episilon, random, currentState.depth + 1);
             this.currentState = currentState;
+            this.hasMetValid =false;
         }
 
         public State getNextState() {
@@ -76,7 +86,7 @@ public class TrieBasedMonteCarloLearner {
             return action.toString();
         }
 
-        public void update(int r) {
+        public void update(double r) {
             this.count += 1;
             this.Q = this.Q + (1.0 / this.count) * (r - this.Q);
         }
@@ -84,19 +94,21 @@ public class TrieBasedMonteCarloLearner {
 
     public static class State {
         private double episilon;
+        private int depth;
         private Map<Object, Action> actions;
         private Random random;
         private final Action previousAction; // if I am a root state, this field is null.
 
-        public State(Action previousAction, double episilon) {
+        public State(Action previousAction, double episilon, int depth) {
             this.previousAction = previousAction;
             this.actions = new HashMap<>();
             this.episilon = episilon;
             this.random = new Random();
+            this.depth = depth;
         }
 
-        public State(Action action, double episilon, Random random) {
-            this(action, episilon);
+        public State(Action action, double episilon, Random random, int depth) {
+            this(action, episilon, depth);
             this.random = random;
         }
 

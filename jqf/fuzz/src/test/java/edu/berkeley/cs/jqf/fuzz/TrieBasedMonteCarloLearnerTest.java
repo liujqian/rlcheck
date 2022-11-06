@@ -21,7 +21,7 @@ public class TrieBasedMonteCarloLearnerTest {
     public void test() {
         Random random = new Random();
         random.setSeed(SEED);
-        TrieBasedMonteCarloLearner learner = new TrieBasedMonteCarloLearner(0.25, random);
+        TrieBasedMonteCarloLearner learner = new TrieBasedMonteCarloLearner(0.25, random,false);
         Object bool = learner.select(bools);
         System.out.println("The guide first selected " + bool + " from " + bools);
         Object integer = learner.select(ints);

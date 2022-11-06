@@ -24,7 +24,7 @@ echo "Experiment settings: writing to $OUT_DIR, doing $NUM_REPS repetitions" >> 
 
 BENCHMARKS=(ant maven closure rhino)
 TEST_CLASSES=(ant.ProjectBuilderTest maven.ModelReaderTest closure.CompilerTest rhino.CompilerTest)
-TEST_GENS=(edu.berkeley.cs.jqf.fuzz.rl.xml.XmlRLGeneratorWithTrieSarsaGuide edu.berkeley.cs.jqf.fuzz.rl.xml.XmlRLGeneratorWithTrieSarsaGuide edu.berkeley.cs.jqf.fuzz.rl.js.JavaScriptRLGeneratorWithTrieSarsaGuide edu.berkeley.cs.jqf.fuzz.rl.js.JavaScriptRLGeneratorWithTrieSarsaGuide)
+TEST_GENS=(edu.berkeley.cs.jqf.fuzz.rl.xml.XmlRLGeneratorWithTrieMCGuide edu.berkeley.cs.jqf.fuzz.rl.xml.XmlRLGeneratorWithTrieMCGuide edu.berkeley.cs.jqf.fuzz.rl.js.JavaScriptRLGeneratorWithTrieMCGuide edu.berkeley.cs.jqf.fuzz.rl.js.JavaScriptRLGeneratorWithTrieMCGuide)
 
 TEST_METHOD_ZEST=(testWithInputStreamGenerator testWithInputStreamGenerator testWithGenerator testWithGenerator)
 
@@ -40,7 +40,7 @@ dir_does_not_exist() {
 
 trap "trap - SIGTERM && killall java && echo 'Terminated' >> $LOG_FILE && exit " SIGINT SIGTERM EXIT
 
-for bench_index in {3..3}; do
+for bench_index in {0..3}; do
 	BENCHMARK=${BENCHMARKS[$bench_index]}
 	TEST_CLASS=edu.berkeley.cs.jqf.examples.${TEST_CLASSES[$bench_index]}
 	TEST_METHOD_RL=testWithInputStream

@@ -54,7 +54,8 @@ public class XmlRLGeneratorWithTrieMCGuide implements RLGenerator {
     private final List<Object> BOOLEANS = Arrays.asList(new Boolean[]{true, false});
     private final List<Object> NUM_C = Arrays.asList(RLGuide.range(0, MAX_NUM_CHILDREN));
     private final List<Object> NUM_A = Arrays.asList(RLGuide.range(0, MAX_NUM_ATTRIBUTES));
-    private  List<Object> TAGS = null;
+    private List<Object> TAGS = null;
+
 
     /* Need to initialize with parameters using init method after constructor is called. */
     public XmlRLGeneratorWithTrieMCGuide() {
@@ -70,14 +71,20 @@ public class XmlRLGeneratorWithTrieMCGuide implements RLGenerator {
      */
     @Override
     public void init(RLParams params) {
-        System.out.println("The \"init\" method of SequentialStateXmlRLGeneratorWithTrieGuide is called!");
         double e = (double) params.get("defaultEpsilon", true);
-        if (params.exists("seed")) {
-            learner = new TrieBasedMonteCarloLearner(e, new Random((long) params.get("seed")));
-        } else {
-            learner = new TrieBasedMonteCarloLearner(e);
+        boolean useBonus = false;
+        if (params.exists("explorationBonus")) {
+            useBonus = true;
         }
-       TAGS = (List<Object>) params.get("tags", true);
+        if (params.exists("seed")) {
+            learner = new TrieBasedMonteCarloLearner(e, new Random((long) params.get("seed")),useBonus);
+        } else {
+            learner = new TrieBasedMonteCarloLearner(e,useBonus);
+        }
+
+        TAGS = (List<Object>) params.get("tags", true);
+
+        System.out.println("The \"init\" method of XmlRLGeneratorWithTrieMCGuide is called! useBonus is " + useBonus + "!");
     }
 
     /**
