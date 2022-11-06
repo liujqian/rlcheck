@@ -1,13 +1,14 @@
 package edu.berkeley.cs.jqf.examples.js;
+
 import edu.berkeley.cs.jqf.fuzz.rl.RLGenerator;
 import edu.berkeley.cs.jqf.fuzz.rl.RLGuide;
 import edu.berkeley.cs.jqf.fuzz.rl.RLParams;
+
 import java.util.*;
 import java.util.function.Function;
 
 
-
-public class JavaScriptRLGenerator implements RLGenerator {
+public class SequentialJavaScriptRLGeneratorWithTableMCGuide implements RLGenerator {
 
     private RLGuide guide;
 
@@ -23,7 +24,9 @@ public class JavaScriptRLGenerator implements RLGenerator {
     private int chrId;
     private int selectId;
 
-    /** Terminal action output */
+    /**
+     * Terminal action output
+     */
     public static final String terminal = "END"; // Unused
 
 
@@ -64,24 +67,26 @@ public class JavaScriptRLGenerator implements RLGenerator {
             "int", "boolean", "string", "undefined", "null", "this"
     };
 
-    public JavaScriptRLGenerator() {}
+    public SequentialJavaScriptRLGeneratorWithTableMCGuide() {
+    }
+
     /**
      * Parameter initialization function
-     * @param params:
-     *              int stateSize,
-     *              int seed (optional)
-     *              double defaultEpsilon // TODO: per learner epsilon values
+     *
+     * @param params: int stateSize,
+     *                int seed (optional)
+     *                double defaultEpsilon // TODO: per learner epsilon values
      */
-    public void init(RLParams params){
-        if (params.exists("seed")){
+    public void init(RLParams params) {
+        if (params.exists("seed")) {
             guide = new RLGuide((long) params.get("seed"));
         } else {
             guide = new RLGuide();
         }
         double e = (double) params.get("defaultEpsilon", true);
-        List<Object> ints =  Arrays.asList(RLGuide.range(MIN_INT, MAX_INT+1));
+        List<Object> ints = Arrays.asList(RLGuide.range(MIN_INT, MAX_INT + 1));
         List<Object> bools = Arrays.asList(BOOLEANS);
-        List <Object> ascii = new ArrayList<> (26);
+        List<Object> ascii = new ArrayList<>(26);
         for (char c = 'A'; c <= 'Z'; c++)
             ascii.add(String.valueOf(c));
 
@@ -95,9 +100,10 @@ public class JavaScriptRLGenerator implements RLGenerator {
 
     /**
      * Generate the next input
+     *
      * @return The next input as an InputStream
      */
-    public String generate(){
+    public String generate() {
         this.identifiers = new HashSet<>();
         this.statementDepth = 0;
         this.expressionDepth = 0;
@@ -107,6 +113,7 @@ public class JavaScriptRLGenerator implements RLGenerator {
 
     /**
      * Update the state of the generator given a reward
+     *
      * @param r reward
      */
     public void update(int r) {
@@ -115,7 +122,7 @@ public class JavaScriptRLGenerator implements RLGenerator {
 
 
     private String generateExpression(String[] stateArr) {
-        stateArr = updateState(stateArr, "node=expression");
+        updateState(stateArr, "node=expression");
         expressionDepth++;
         String result;
         if (expressionDepth >= MAX_EXPRESSION_DEPTH || (Boolean) guide.select(stateArr, boolId)) {
@@ -124,7 +131,7 @@ public class JavaScriptRLGenerator implements RLGenerator {
                     stateArr,
                     selectId
             );
-            switch (fn){
+            switch (fn) {
                 case "literal":
                     result = generateLiteralNode(stateArr);
                     break;
@@ -175,7 +182,7 @@ public class JavaScriptRLGenerator implements RLGenerator {
     }
 
     private String generateStatement(String[] stateArr) {
-        stateArr = updateState(stateArr, "node=statement");
+        updateState(stateArr, "node=statement");
         statementDepth++;
         String result;
         if (statementDepth >= MAX_STATEMENT_DEPTH || (Boolean) guide.select(stateArr, boolId)) {
@@ -184,7 +191,7 @@ public class JavaScriptRLGenerator implements RLGenerator {
                     stateArr,
                     selectId
             );
-            switch (fn){
+            switch (fn) {
                 case "expression":
                     result = generateExpression(stateArr);
                     break;
@@ -248,12 +255,12 @@ public class JavaScriptRLGenerator implements RLGenerator {
 
 
     private String generateLiteralNode(String[] stateArr) {
-        String[] stateBool = updateState(stateArr, "node=literal");
-        if (expressionDepth < MAX_EXPRESSION_DEPTH && (Boolean) guide.select(stateBool, boolId)) {
-            stateBool = updateState(stateArr, "branch=1");
+        updateState(stateArr, "node=literal");
+        if (expressionDepth < MAX_EXPRESSION_DEPTH && (Boolean) guide.select(stateArr, boolId)) {
+            updateState(stateArr, "branch=1");
             //TODO multiple expressions in brackets
-            int numArgs = (int) guide.select(stateBool, intId);
-            if ((Boolean) guide.select(stateBool, boolId)) {
+            int numArgs = (int) guide.select(stateArr, intId);
+            if ((Boolean) guide.select(stateArr, boolId)) {
                 return "[" + generateItems(this::generateExpression, stateArr, numArgs) + "]";
             } else {
                 return "{" + generateItems(this::generateObjectProperty, stateArr, numArgs) + "}";
@@ -264,7 +271,7 @@ public class JavaScriptRLGenerator implements RLGenerator {
                     stateArr,
                     selectId
             );
-            switch (type){
+            switch (type) {
                 case "int":
                     return String.valueOf(guide.select(stateArr, intId));
                 case "boolean":
@@ -277,10 +284,10 @@ public class JavaScriptRLGenerator implements RLGenerator {
             }
         }
     }
-    
+
     private String generateIdentNode(String[] stateArr) {
         String identifier;
-        stateArr = updateState(stateArr, "node=ident");
+        updateState(stateArr, "node=ident");
         if (identifiers.isEmpty() || (identifiers.size() < MAX_IDENTIFIERS && (Boolean) guide.select(stateArr, boolId))) {
             identifier = guide.select(stateArr, chrId) + "_" + identifiers.size();
             identifiers.add(identifier);
@@ -292,44 +299,44 @@ public class JavaScriptRLGenerator implements RLGenerator {
     }
 
     private String generateUnaryNode(String[] stateArr) {
-        stateArr = updateState(stateArr, "node=unary");
+        updateState(stateArr, "node=unary");
         String token = (String) guide.select(
                 Arrays.asList(UNARY_TOKENS),
                 stateArr,
                 selectId
         );
-        stateArr = updateState(stateArr, "unary=" + token);
+        updateState(stateArr, "unary=" + token);
         return token + " " + generateExpression(stateArr);
     }
 
     private String generateBinaryNode(String[] stateArr) {
-        stateArr = updateState(stateArr, "node=binary");
+        updateState(stateArr, "node=binary");
         String token = (String) guide.select(
                 Arrays.asList(BINARY_TOKENS),
                 stateArr,
                 selectId
         );
-        stateArr = updateState(stateArr, "binary=" + token);
+        updateState(stateArr, "binary=" + token);
         String lhs = generateExpression(stateArr);
         String rhs = generateExpression(stateArr);
         return lhs + " " + token + " " + rhs;
     }
 
     private String generateTernaryNode(String[] stateArr) {
-        stateArr = updateState(stateArr, "node=ternary");
+        updateState(stateArr, "node=ternary");
         return generateExpression(stateArr) + " ? " + generateExpression(stateArr) +
                 " : " + generateExpression(stateArr);
     }
 
     private String generateCallNode(String[] stateArr) {
-        stateArr = updateState(stateArr, "node=call");
+        updateState(stateArr, "node=call");
         String func = generateExpression(stateArr);
 
-        stateArr = updateState(stateArr, "func=" + func);
+        updateState(stateArr, "func=" + func);
         int numArgs = (int) guide.select(stateArr, intId);
         String args = String.join(",", generateItems(this::generateExpression, stateArr, numArgs));
 
-        stateArr = updateState(stateArr, "args=" + args);
+        updateState(stateArr, "args=" + args);
         String call = func + "(" + args + ")";
         if ((Boolean) guide.select(stateArr, boolId)) {
             return call;
@@ -339,25 +346,25 @@ public class JavaScriptRLGenerator implements RLGenerator {
     }
 
     private String generateFunctionNode(String[] stateArr) {
-        stateArr = updateState(stateArr, "node=function");
+        updateState(stateArr, "node=function");
         int numArgs = (int) guide.select(stateArr, intId);
         return "function(" + String.join(", ", generateItems(this::generateIdentNode, stateArr, numArgs)) + ")"
                 + generateBlock(stateArr);
     }
 
     private String generatePropertylNode(String[] stateArr) {
-        stateArr = updateState(stateArr, "node=property");
+        updateState(stateArr, "node=property");
         return generateExpression(stateArr) + "." + generateIdentNode(stateArr);
     }
 
     private String generateIndexNode(String[] stateArr) {
-        stateArr = updateState(stateArr, "node=index");
+        updateState(stateArr, "node=index");
         return generateExpression(stateArr) + "[" + generateExpression(stateArr) + "]";
 
     }
 
     private String generateArrowFunctionNode(String[] stateArr) {
-        stateArr = updateState(stateArr, "node=arrow");
+        updateState(stateArr, "node=arrow");
         int numArgs = (int) guide.select(stateArr, intId);
         String params = "(" + String.join(", ", generateItems(this::generateIdentNode, stateArr, numArgs)) + ")";
         if ((Boolean) guide.select(stateArr, boolId)) {
@@ -368,7 +375,7 @@ public class JavaScriptRLGenerator implements RLGenerator {
     }
 
     private String generateBlock(String[] stateArr) {
-        stateArr = updateState(stateArr, "node=block");
+        updateState(stateArr, "node=block");
         int numArgs = (int) guide.select(stateArr, intId);
         return "{ " + String.join(";", generateItems(this::generateStatement, stateArr, numArgs)) + " }";
 
@@ -383,17 +390,17 @@ public class JavaScriptRLGenerator implements RLGenerator {
     }
 
     private String generateReturnNode(String[] stateArr) {
-        stateArr = updateState(stateArr, "node=return");
+        updateState(stateArr, "node=return");
         return (Boolean) guide.select(stateArr, boolId) ? "return" : "return " + generateExpression(stateArr);
     }
 
     private String generateThrowNode(String[] stateArr) {
-        stateArr = updateState(stateArr, "node=throw");
+        updateState(stateArr, "node=throw");
         return "throw " + generateExpression(stateArr);
     }
 
     private String generateVarNode(String[] stateArr) {
-        stateArr = updateState(stateArr, "node=var");
+        updateState(stateArr, "node=var");
         return "var " + generateIdentNode(stateArr);
     }
 
@@ -402,7 +409,7 @@ public class JavaScriptRLGenerator implements RLGenerator {
     }
 
     private String generateIfNode(String[] stateArr) {
-        stateArr = updateState(stateArr, "node=if");
+        updateState(stateArr, "node=if");
         return "if (" +
                 generateExpression(stateArr) + ") " +
                 generateBlock(stateArr) +
@@ -410,20 +417,20 @@ public class JavaScriptRLGenerator implements RLGenerator {
     }
 
     private String generateForNode(String[] stateArr) {
-        stateArr = updateState(stateArr, "node=for");
+        updateState(stateArr, "node=for");
         String s = "for(";
         if ((Boolean) guide.select(stateArr, boolId)) {
-            stateArr = updateState(stateArr, "branch=1");
+            updateState(stateArr, "branch=1");
             s += generateExpression(stateArr);
         }
         s += ";";
         if ((Boolean) guide.select(stateArr, boolId)) {
-            stateArr = updateState(stateArr, "branch=2");
+            updateState(stateArr, "branch=2");
             s += generateExpression(stateArr);
         }
         s += ";";
         if ((Boolean) guide.select(stateArr, boolId)) {
-            stateArr = updateState(stateArr, "branch=3");
+            updateState(stateArr, "branch=3");
             s += generateExpression(stateArr);
         }
         s += ")";
@@ -432,68 +439,62 @@ public class JavaScriptRLGenerator implements RLGenerator {
     }
 
     private String generateWhileNode(String[] stateArr) {
-        stateArr = updateState(stateArr, "node=while");
+        updateState(stateArr, "node=while");
         return "while (" + generateExpression(stateArr) + ")" + generateBlock(stateArr);
 
     }
 
     private String generateNamedFunctionNode(String[] stateArr) {
-        stateArr = updateState(stateArr, "node=namedfunc");
+        updateState(stateArr, "node=namedfunc");
         int numArgs = (int) guide.select(stateArr, intId);
         return "function " + generateIdentNode(stateArr) + "(" + String.join(", ", generateItems(this::generateIdentNode, stateArr, numArgs)) + ")" + generateBlock(stateArr);
     }
 
     private String generateSwitchNode(String[] stateArr) {
-        stateArr = updateState(stateArr, "node=switch");
+        updateState(stateArr, "node=switch");
         int numArgs = (int) guide.select(stateArr, intId);
         return "switch(" + generateExpression(stateArr) + ") {"
                 + String.join(" ", generateItems(this::generateCaseNode, stateArr, numArgs) + "}");
     }
 
     private String generateTryNode(String[] stateArr) {
-        stateArr = updateState(stateArr, "node=try");
+        updateState(stateArr, "node=try");
         return "try " + generateBlock(stateArr) + generateCatchNode(stateArr);
 
     }
 
     private String generateCatchNode(String[] stateArr) {
-        stateArr = updateState(stateArr, "node=catch");
+        updateState(stateArr, "node=catch");
         return "catch (" + generateIdentNode(stateArr) + ") " +
                 generateBlock(stateArr);
     }
 
 
-
     private String generateObjectProperty(String[] stateArr) {
-        stateArr = updateState(stateArr, "node=property");
+        updateState(stateArr, "node=property");
         return generateIdentNode(stateArr) + ": " + generateExpression(stateArr);
     }
 
 
     private String generateCaseNode(String[] stateArr) {
-        stateArr = updateState(stateArr, "node=case");
-        return "case " + generateExpression(stateArr) + ": " +  generateBlock(stateArr);
+        updateState(stateArr, "node=case");
+        return "case " + generateExpression(stateArr) + ": " + generateBlock(stateArr);
     }
 
 
     private <T> List<T> generateItems(Function<String[], T> generator, String[] stateArr, int len) {
         List<T> items = new ArrayList<>(len);
         for (int i = 0; i < len; i++) {
-            stateArr = updateState(stateArr, "index=" + String.valueOf(i));
+            updateState(stateArr, "index=" + String.valueOf(i));
             items.add(generator.apply(stateArr));
         }
         return items;
     }
+
     /* Update and return new state. Removes items if too long */
-    private String[] updateState(String[] stateArr, String stateX) {
-        String[] newState = new String[stateSize];
+    private void updateState(String[] stateArr, String stateX) {
         int end = stateSize - 1;
-        newState[end] = stateX;
-        for (int i = 0; i < end; i++) {
-            newState[i] = stateArr[i + 1];
-        }
-        return newState;
+        stateArr[end] = stateX;
+        System.arraycopy(stateArr, 1, stateArr, 0, end);
     }
-
-
 }
