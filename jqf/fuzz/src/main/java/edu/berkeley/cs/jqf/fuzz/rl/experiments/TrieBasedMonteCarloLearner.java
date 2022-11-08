@@ -12,14 +12,25 @@ public class TrieBasedMonteCarloLearner {
 
     public TrieBasedMonteCarloLearner(double episilon, boolean useExplorationBonus) {
         this.useExplorationBonus = useExplorationBonus;
-        this.rootState = new State(null, episilon, 1);
+        this.rootState = new State(null, episilon, 0);
         this.currentState = rootState;
     }
 
     public TrieBasedMonteCarloLearner(double episilon, Random random, boolean useExplorationBonus) {
         this.useExplorationBonus = useExplorationBonus;
-        this.rootState = new State(null, episilon, random, 1);
+        this.rootState = new State(null, episilon, random, 0);
         this.currentState = rootState;
+    }
+
+    public State getCurrentState() {
+        return currentState;
+    }
+
+    public State getRootState() {
+        return rootState;
+    }
+    public boolean isUseExplorationBonus() {
+        return useExplorationBonus;
     }
 
     public Object select(List<Object> choices) {
@@ -43,10 +54,6 @@ public class TrieBasedMonteCarloLearner {
         }
     }
 
-    private void resetCurrentStateToRoot() {
-        this.currentState = rootState;
-    }
-
     static class Action {
         private int count;
         private double Q;
@@ -55,6 +62,10 @@ public class TrieBasedMonteCarloLearner {
         private Object action;
 
         private boolean hasMetValid;
+
+        public boolean isHasMetValid() {
+            return hasMetValid;
+        }
 
         public Action(Object action, double episilon, State currentState, Random random) {
             this.count = 0;
@@ -86,6 +97,11 @@ public class TrieBasedMonteCarloLearner {
             return action.toString();
         }
 
+
+        public int getCount() {
+            return count;
+        }
+
         public void update(double r) {
             this.count += 1;
             this.Q = this.Q + (1.0 / this.count) * (r - this.Q);
@@ -115,6 +131,18 @@ public class TrieBasedMonteCarloLearner {
         @Override
         public String toString() {
             return previousAction == null ? "* " : previousAction.getCurrentState().toString() + "| " + previousAction + " ";
+        }
+
+        public double getEpisilon() {
+            return episilon;
+        }
+
+        public int getDepth() {
+            return depth;
+        }
+
+        public Map<Object, Action> getActions() {
+            return actions;
         }
 
         public State select(List<Object> options) {
