@@ -7,7 +7,6 @@ import edu.berkeley.cs.jqf.fuzz.rl.RLParams;
 import java.util.*;
 import java.util.function.Function;
 
-
 public class SequentialJavaScriptRLGeneratorWithTableMCGuide implements RLGenerator {
 
     private RLGuide guide;
@@ -19,16 +18,45 @@ public class SequentialJavaScriptRLGeneratorWithTableMCGuide implements RLGenera
     private int statementDepth;
     private int expressionDepth;
     private int stateSize;
-    private int intId;
-    private int boolId;
-    private int chrId;
-    private int selectId;
 
+    int hasExpr1BoolID;
+    int hasStat1BoolID;
+    int genLitNode1BoolID;
+    int genBracketsBoolID;
+    int literalBoolBoolID;
+    int addIdentifierBoolID;
+    int useNewBoolID;
+    int generateBlockBoolID;
+    int emptyReturnBoolID;
+    int generateElseBlockBoolID;
+    int hasForExpr1BoolID;
+    int hasForExpr2BoolID;
+    int hasForExpr3BoolID;
+
+    int literalStrCharID;
+    int identifierPreCharID;
+
+    int expression1SelectID;
+    int expression2SelectID;
+    int statements1SelectID;
+    int statements2SelectID;
+    int literalTypesSelectID;
+    int identListSelectID;
+    int unaryTokensSelectID;
+    int binaryTokensSelectID;
+
+    int numArgsLiteralNodeIntID;
+    int literalIntIntID;
+    int numArgsCallNodeIntID;
+    int numArgsFunctionNodeIntID;
+    int numArgsArrowFuncNodeIntID;
+    int numArgsBlockNodeIntID;
+    int numArgsNamedFuncNodeIntID;
+    int numArgsSwitchNodeIntID;
     /**
      * Terminal action output
      */
     public static final String terminal = "END"; // Unused
-
 
     private int MIN_INT = 0;
     private int MAX_INT = 5;
@@ -91,11 +119,41 @@ public class SequentialJavaScriptRLGeneratorWithTableMCGuide implements RLGenera
             ascii.add(String.valueOf(c));
 
         this.stateSize = (int) params.get("stateSize", true);
-        this.selectId = guide.addLearner(null, e);
-        this.intId = guide.addLearner(ints, e);
-        this.boolId = guide.addLearner(bools, e);
-        this.chrId = guide.addLearner(ascii, e);
 
+        this.expression1SelectID = guide.addLearner(null, e);
+        this.expression2SelectID = guide.addLearner(null, e);
+        this.statements1SelectID = guide.addLearner(null, e);
+        this.statements2SelectID = guide.addLearner(null, e);
+        this.literalTypesSelectID = guide.addLearner(null, e);
+        this.identListSelectID = guide.addLearner(null, e);
+        this.unaryTokensSelectID = guide.addLearner(null, e);
+        this.binaryTokensSelectID = guide.addLearner(null, e);
+
+        this.numArgsLiteralNodeIntID = guide.addLearner(ints, e);
+        this.literalIntIntID = guide.addLearner(ints, e);
+        this.numArgsCallNodeIntID = guide.addLearner(ints, e);
+        this.numArgsFunctionNodeIntID = guide.addLearner(ints, e);
+        this.numArgsArrowFuncNodeIntID = guide.addLearner(ints, e);
+        this.numArgsBlockNodeIntID = guide.addLearner(ints, e);
+        this.numArgsNamedFuncNodeIntID = guide.addLearner(ints, e);
+        this.numArgsSwitchNodeIntID = guide.addLearner(ints, e);
+
+        this.hasExpr1BoolID = guide.addLearner(bools, e);
+        this.hasStat1BoolID = guide.addLearner(bools, e);
+        this.genLitNode1BoolID = guide.addLearner(bools, e);
+        this.genBracketsBoolID = guide.addLearner(bools, e);
+        this.literalBoolBoolID = guide.addLearner(bools, e);
+        this.addIdentifierBoolID = guide.addLearner(bools, e);
+        this.useNewBoolID = guide.addLearner(bools, e);
+        this.generateBlockBoolID = guide.addLearner(bools, e);
+        this.emptyReturnBoolID = guide.addLearner(bools, e);
+        this.generateElseBlockBoolID = guide.addLearner(bools, e);
+        this.hasForExpr1BoolID = guide.addLearner(bools, e);
+        this.hasForExpr2BoolID = guide.addLearner(bools, e);
+        this.hasForExpr3BoolID = guide.addLearner(bools, e);
+
+        this.literalStrCharID = guide.addLearner(ascii, e);
+        this.identifierPreCharID = guide.addLearner(ascii, e);
     }
 
     /**
@@ -120,16 +178,14 @@ public class SequentialJavaScriptRLGeneratorWithTableMCGuide implements RLGenera
         guide.update(r);
     }
 
-
     private String generateExpression(String[] stateArr) {
-        updateState(stateArr, "node=expression");
         expressionDepth++;
         String result;
 
         boolean greaterThanMaxExprDepth = expressionDepth >= MAX_EXPRESSION_DEPTH;
         boolean selected = false;
         if (!greaterThanMaxExprDepth) {
-            selected = (Boolean) guide.select(stateArr, boolId);
+            selected = (Boolean) guide.select(stateArr, hasExpr1BoolID);
             updateState(stateArr, "haveExpression_1=" + selected);
         }
 
@@ -137,8 +193,7 @@ public class SequentialJavaScriptRLGeneratorWithTableMCGuide implements RLGenera
             String fn = (String) guide.select(
                     Arrays.asList(EXPRESSIONS_1),
                     stateArr,
-                    selectId
-            );
+                    expression1SelectID);
             updateState(stateArr, "selectedExpression_1=" + fn);
             switch (fn) {
                 case "literal":
@@ -155,8 +210,7 @@ public class SequentialJavaScriptRLGeneratorWithTableMCGuide implements RLGenera
             String fn = (String) guide.select(
                     Arrays.asList(EXPRESSIONS_2),
                     stateArr,
-                    selectId
-            );
+                    expression2SelectID);
             updateState(stateArr, "selectedExpression_2=" + fn);
             switch (fn) {
                 case "unary":
@@ -192,14 +246,13 @@ public class SequentialJavaScriptRLGeneratorWithTableMCGuide implements RLGenera
     }
 
     private String generateStatement(String[] stateArr) {
-        updateState(stateArr, "node=statement");
         statementDepth++;
         String result;
 
         boolean greaterThanMaxStatementDepth = statementDepth >= MAX_STATEMENT_DEPTH;
         boolean selected = false;
         if (!greaterThanMaxStatementDepth) {
-            selected = (Boolean) guide.select(stateArr, boolId);
+            selected = (Boolean) guide.select(stateArr, hasStat1BoolID);
             updateState(stateArr, "haveStatement_1=" + selected);
         }
 
@@ -207,8 +260,7 @@ public class SequentialJavaScriptRLGeneratorWithTableMCGuide implements RLGenera
             String fn = (String) guide.select(
                     Arrays.asList(STATEMENTS_1),
                     stateArr,
-                    selectId
-            );
+                    statements1SelectID);
             updateState(stateArr, "selectedStatement_1" + fn);
             switch (fn) {
                 case "expression":
@@ -240,8 +292,7 @@ public class SequentialJavaScriptRLGeneratorWithTableMCGuide implements RLGenera
             String fn = (String) guide.select(
                     Arrays.asList(STATEMENTS_2),
                     stateArr,
-                    selectId
-            );
+                    statements2SelectID);
             updateState(stateArr, "selectedStatement_2" + fn);
             switch (fn) {
                 case "if":
@@ -273,24 +324,21 @@ public class SequentialJavaScriptRLGeneratorWithTableMCGuide implements RLGenera
         return result;
     }
 
-
     private String generateLiteralNode(String[] stateArr) {
-        updateState(stateArr, "node=literal");
 
         boolean lessThanMaxExprDepth = expressionDepth < MAX_EXPRESSION_DEPTH;
         boolean selected = false;
         if (lessThanMaxExprDepth) {
-            selected = (Boolean) guide.select(stateArr, boolId);
+            selected = (Boolean) guide.select(stateArr, genLitNode1BoolID);
             updateState(stateArr, "generateLiteralNode_1=" + selected);
         }
 
         if (lessThanMaxExprDepth && selected) {
-            updateState(stateArr, "branch=1");
-            //TODO multiple expressions in brackets
-            int numArgs = (int) guide.select(stateArr, intId);
-            updateState(stateArr, "numArgs=" + numArgs);
+            // TODO multiple expressions in brackets
+            int numArgs = (int) guide.select(stateArr, numArgsLiteralNodeIntID);
+            updateState(stateArr, "numArgsLiteralNode=" + numArgs);
 
-            boolean generateBrackets = (Boolean) guide.select(stateArr, boolId);
+            boolean generateBrackets = (Boolean) guide.select(stateArr, genBracketsBoolID);
             updateState(stateArr, "generateBrackets=" + generateBrackets);
 
             if (generateBrackets) {
@@ -302,21 +350,20 @@ public class SequentialJavaScriptRLGeneratorWithTableMCGuide implements RLGenera
             String type = (String) guide.select(
                     Arrays.asList(LITERAL_TYPES),
                     stateArr,
-                    selectId
-            );
+                    literalTypesSelectID);
             updateState(stateArr, "literalType=" + type);
             switch (type) {
                 case "int":
-                    int literalInt = (int) guide.select(stateArr, intId);
+                    int literalInt = (int) guide.select(stateArr, literalIntIntID);
                     updateState(stateArr, "literalInt=" + literalInt);
                     return String.valueOf(literalInt);
                 case "boolean":
-                    boolean literalBool = (boolean) guide.select(stateArr, boolId);
+                    boolean literalBool = (boolean) guide.select(stateArr, literalBoolBoolID);
                     updateState(stateArr, "literalBool=" + literalBool);
                     return String.valueOf(literalBool);
                 case "string":
                     Function<String[], String> genChr = s -> {
-                        String literalChar = (String) guide.select(s, chrId);
+                        String literalChar = (String) guide.select(s, literalStrCharID);
                         updateState(stateArr, "literalChar=" + literalChar);
                         return literalChar;
                     };
@@ -329,22 +376,21 @@ public class SequentialJavaScriptRLGeneratorWithTableMCGuide implements RLGenera
 
     private String generateIdentNode(String[] stateArr) {
         String identifier;
-        updateState(stateArr, "node=ident");
         boolean emptyIdentifiers = identifiers.isEmpty();
         boolean lessThanMaxIdentifiers = identifiers.size() < MAX_IDENTIFIERS;
         boolean addIdentifier = false;
         if (!emptyIdentifiers && lessThanMaxIdentifiers) {
-            addIdentifier = (Boolean) guide.select(stateArr, boolId);
+            addIdentifier = (Boolean) guide.select(stateArr, addIdentifierBoolID);
             updateState(stateArr, "addIdentifier=" + addIdentifier);
         }
         if (emptyIdentifiers || (lessThanMaxIdentifiers && addIdentifier)) {
-            String identifier_pre = (String) guide.select(stateArr, chrId);
+            String identifier_pre = (String) guide.select(stateArr, identifierPreCharID);
             updateState(stateArr, "identifierPre=" + identifier_pre);
             identifier = identifier_pre + "_" + identifiers.size();
             identifiers.add(identifier);
         } else {
             List<Object> identList = new ArrayList<>(identifiers);
-            String selectedId = (String) guide.select(identList, stateArr, selectId);
+            String selectedId = (String) guide.select(identList, stateArr, identListSelectID);
             updateState(stateArr, "selectedIdentifier=" + selectedId);
             identifier = selectedId;
         }
@@ -352,23 +398,19 @@ public class SequentialJavaScriptRLGeneratorWithTableMCGuide implements RLGenera
     }
 
     private String generateUnaryNode(String[] stateArr) {
-        updateState(stateArr, "node=unary");
         String token = (String) guide.select(
                 Arrays.asList(UNARY_TOKENS),
                 stateArr,
-                selectId
-        );
+                unaryTokensSelectID);
         updateState(stateArr, "unary=" + token);
         return token + " " + generateExpression(stateArr);
     }
 
     private String generateBinaryNode(String[] stateArr) {
-        updateState(stateArr, "node=binary");
         String token = (String) guide.select(
                 Arrays.asList(BINARY_TOKENS),
                 stateArr,
-                selectId
-        );
+                binaryTokensSelectID);
         updateState(stateArr, "binary=" + token);
         String lhs = generateExpression(stateArr);
         String rhs = generateExpression(stateArr);
@@ -376,23 +418,18 @@ public class SequentialJavaScriptRLGeneratorWithTableMCGuide implements RLGenera
     }
 
     private String generateTernaryNode(String[] stateArr) {
-        updateState(stateArr, "node=ternary");
         return generateExpression(stateArr) + " ? " + generateExpression(stateArr) +
                 " : " + generateExpression(stateArr);
     }
 
     private String generateCallNode(String[] stateArr) {
-        updateState(stateArr, "node=call");
         String func = generateExpression(stateArr);
-
-        updateState(stateArr, "func=" + func);
-        int numArgs = (int) guide.select(stateArr, intId);
-        updateState(stateArr, "numArgs=" + numArgs);
+        int numArgs = (int) guide.select(stateArr, numArgsCallNodeIntID);
+        updateState(stateArr, "numArgsCallNode=" + numArgs);
         String args = String.join(",", generateItems(this::generateExpression, stateArr, numArgs));
 
-        updateState(stateArr, "args=" + args);
         String call = func + "(" + args + ")";
-        boolean useNes = (Boolean) guide.select(stateArr, boolId);
+        boolean useNes = (Boolean) guide.select(stateArr, useNewBoolID);
         updateState(stateArr, "useNew=" + useNes);
         if (useNes) {
             return call;
@@ -402,31 +439,27 @@ public class SequentialJavaScriptRLGeneratorWithTableMCGuide implements RLGenera
     }
 
     private String generateFunctionNode(String[] stateArr) {
-        updateState(stateArr, "node=function");
-        int numArgs = (int) guide.select(stateArr, intId);
-        updateState(stateArr, "numArgs=" + numArgs);
+        int numArgs = (int) guide.select(stateArr, numArgsFunctionNodeIntID);
+        updateState(stateArr, "numArgsFunctionNode=" + numArgs);
         return "function(" + String.join(", ", generateItems(this::generateIdentNode, stateArr, numArgs)) + ")"
                 + generateBlock(stateArr);
     }
 
     private String generatePropertylNode(String[] stateArr) {
-        updateState(stateArr, "node=property");
         return generateExpression(stateArr) + "." + generateIdentNode(stateArr);
     }
 
     private String generateIndexNode(String[] stateArr) {
-        updateState(stateArr, "node=index");
         return generateExpression(stateArr) + "[" + generateExpression(stateArr) + "]";
 
     }
 
     private String generateArrowFunctionNode(String[] stateArr) {
-        updateState(stateArr, "node=arrow");
-        int numArgs = (int) guide.select(stateArr, intId);
-        updateState(stateArr, "numArgs=" + numArgs);
+        int numArgs = (int) guide.select(stateArr, numArgsArrowFuncNodeIntID);
+        updateState(stateArr, "numArgsArrowFuncNode=" + numArgs);
         String params = "(" + String.join(", ", generateItems(this::generateIdentNode, stateArr, numArgs)) + ")";
 
-        boolean generateBlock = (Boolean) guide.select(stateArr, boolId);
+        boolean generateBlock = (Boolean) guide.select(stateArr, generateBlockBoolID);
         updateState(stateArr, "generateBlock=" + generateBlock);
         if (generateBlock) {
             return params + " => " + generateBlock(stateArr);
@@ -436,9 +469,8 @@ public class SequentialJavaScriptRLGeneratorWithTableMCGuide implements RLGenera
     }
 
     private String generateBlock(String[] stateArr) {
-        updateState(stateArr, "node=block");
-        int numArgs = (int) guide.select(stateArr, intId);
-        updateState(stateArr, "numArgs=" + numArgs);
+        int numArgs = (int) guide.select(stateArr, numArgsBlockNodeIntID);
+        updateState(stateArr, "numArgsBlockNode=" + numArgs);
         return "{ " + String.join(";", generateItems(this::generateStatement, stateArr, numArgs)) + " }";
 
     }
@@ -452,19 +484,16 @@ public class SequentialJavaScriptRLGeneratorWithTableMCGuide implements RLGenera
     }
 
     private String generateReturnNode(String[] stateArr) {
-        updateState(stateArr, "node=return");
-        boolean emptyReturn = (Boolean) guide.select(stateArr, boolId);
+        boolean emptyReturn = (Boolean) guide.select(stateArr, emptyReturnBoolID);
         updateState(stateArr, "emptyReturn=" + emptyReturn);
         return emptyReturn ? "return" : "return " + generateExpression(stateArr);
     }
 
     private String generateThrowNode(String[] stateArr) {
-        updateState(stateArr, "node=throw");
         return "throw " + generateExpression(stateArr);
     }
 
     private String generateVarNode(String[] stateArr) {
-        updateState(stateArr, "node=var");
         return "var " + generateIdentNode(stateArr);
     }
 
@@ -473,37 +502,32 @@ public class SequentialJavaScriptRLGeneratorWithTableMCGuide implements RLGenera
     }
 
     private String generateIfNode(String[] stateArr) {
-        updateState(stateArr, "node=if");
         String first = "if (" +
                 generateExpression(stateArr) + ") " +
                 generateBlock(stateArr);
-        boolean generateBlock = (Boolean) guide.select(stateArr, boolId);
-        updateState(stateArr, "generateBlock=" + generateBlock);
+        boolean generateBlock = (Boolean) guide.select(stateArr, generateElseBlockBoolID);
+        updateState(stateArr, "generateElseBlock=" + generateBlock);
         return first +
                 (generateBlock ? generateBlock(stateArr) : "");
     }
 
     private String generateForNode(String[] stateArr) {
-        updateState(stateArr, "node=for");
         String s = "for(";
-        boolean hasForExpr1 = (Boolean) guide.select(stateArr, boolId);
+        boolean hasForExpr1 = (Boolean) guide.select(stateArr, hasForExpr1BoolID);
         updateState(stateArr, "hasForExpr1=" + hasForExpr1);
         if (hasForExpr1) {
-            updateState(stateArr, "branch=1");
             s += generateExpression(stateArr);
         }
         s += ";";
-        boolean hasForExpr2 = (Boolean) guide.select(stateArr, boolId);
+        boolean hasForExpr2 = (Boolean) guide.select(stateArr, hasForExpr2BoolID);
         updateState(stateArr, "hasForExpr2=" + hasForExpr2);
         if (hasForExpr2) {
-            updateState(stateArr, "branch=2");
             s += generateExpression(stateArr);
         }
         s += ";";
-        boolean hasForExpr3 = (Boolean) guide.select(stateArr, boolId);
+        boolean hasForExpr3 = (Boolean) guide.select(stateArr, hasForExpr3BoolID);
         updateState(stateArr, "hasForExpr3=" + hasForExpr3);
         if (hasForExpr3) {
-            updateState(stateArr, "branch=3");
             s += generateExpression(stateArr);
         }
         s += ")";
@@ -512,55 +536,46 @@ public class SequentialJavaScriptRLGeneratorWithTableMCGuide implements RLGenera
     }
 
     private String generateWhileNode(String[] stateArr) {
-        updateState(stateArr, "node=while");
         return "while (" + generateExpression(stateArr) + ")" + generateBlock(stateArr);
 
     }
 
     private String generateNamedFunctionNode(String[] stateArr) {
-        updateState(stateArr, "node=namedfunc");
-        int numArgs = (int) guide.select(stateArr, intId);
-        updateState(stateArr,"numArgs="+numArgs);
-        return "function " + generateIdentNode(stateArr) + "(" + String.join(", ", generateItems(this::generateIdentNode, stateArr, numArgs)) + ")" + generateBlock(stateArr);
+        int numArgs = (int) guide.select(stateArr, numArgsNamedFuncNodeIntID);
+        updateState(stateArr, "numArgsNamedFuncNode=" + numArgs);
+        return "function " + generateIdentNode(stateArr) + "("
+                + String.join(", ", generateItems(this::generateIdentNode, stateArr, numArgs)) + ")"
+                + generateBlock(stateArr);
     }
 
     private String generateSwitchNode(String[] stateArr) {
-        updateState(stateArr, "node=switch");
-        int numArgs = (int) guide.select(stateArr, intId);
-        updateState(stateArr,"numArgs="+numArgs);
+        int numArgs = (int) guide.select(stateArr, numArgsSwitchNodeIntID);
+        updateState(stateArr, "numArgsSwitchNode=" + numArgs);
         return "switch(" + generateExpression(stateArr) + ") {"
                 + String.join(" ", generateItems(this::generateCaseNode, stateArr, numArgs) + "}");
     }
 
     private String generateTryNode(String[] stateArr) {
-        updateState(stateArr, "node=try");
         return "try " + generateBlock(stateArr) + generateCatchNode(stateArr);
 
     }
 
     private String generateCatchNode(String[] stateArr) {
-        updateState(stateArr, "node=catch");
         return "catch (" + generateIdentNode(stateArr) + ") " +
                 generateBlock(stateArr);
     }
 
-
     private String generateObjectProperty(String[] stateArr) {
-        updateState(stateArr, "node=property");
         return generateIdentNode(stateArr) + ": " + generateExpression(stateArr);
     }
 
-
     private String generateCaseNode(String[] stateArr) {
-        updateState(stateArr, "node=case");
         return "case " + generateExpression(stateArr) + ": " + generateBlock(stateArr);
     }
-
 
     private <T> List<T> generateItems(Function<String[], T> generator, String[] stateArr, int len) {
         List<T> items = new ArrayList<>(len);
         for (int i = 0; i < len; i++) {
-            updateState(stateArr, "index=" + String.valueOf(i));
             items.add(generator.apply(stateArr));
         }
         return items;
