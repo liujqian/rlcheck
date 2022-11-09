@@ -168,24 +168,24 @@ public class TrieBasedMonteCarloLearnerTest {
         random.setSeed(SEED);
         TrieBasedMonteCarloLearner learner = new TrieBasedMonteCarloLearner(0.25, random, false);
         Assert.assertFalse(learner.isUseExplorationBonus());
-        Assert.assertEquals(learner.getCurrentState().getDepth(), 1);
+        Assert.assertEquals(learner.getCurrentState().getDepth(), 0);
 
         Object bool = learner.select(bools);
         Assert.assertFalse((Boolean) bool);
         String stateAfterFirstSelection = learner.getCurrentState().toString();
         Assert.assertEquals(learner.getCurrentState().getPreviousAction().getCurrentState(), learner.getRootState());
-        Assert.assertEquals(learner.getCurrentState().getDepth(), 2);
+        Assert.assertEquals(learner.getCurrentState().getDepth(), 1);
 
         Object integer = learner.select(ints);
         Assert.assertEquals(4, (int) (Integer) integer);
         Assert.assertEquals(learner.getCurrentState().getPreviousAction().getCurrentState().toString(), stateAfterFirstSelection);
         TrieBasedMonteCarloLearner.State stateAfterSecondSelection = learner.getCurrentState();
-        Assert.assertEquals(learner.getCurrentState().getDepth(), 3);
+        Assert.assertEquals(learner.getCurrentState().getDepth(), 2);
 
         Object str = learner.select(strs);
         Assert.assertEquals("Bob", str);
         Assert.assertEquals(learner.getCurrentState().getPreviousAction().getCurrentState(), stateAfterSecondSelection);
-        Assert.assertEquals(learner.getCurrentState().getDepth(), 4);
+        Assert.assertEquals(learner.getCurrentState().getDepth(), 3);
 
         Assert.assertEquals(1, learner.getCurrentState().getPreviousAction().getCurrentState().getActions().size());
         Assert.assertEquals("Bob", learner.getCurrentState().getPreviousAction().getCurrentState().getActions().get("Bob").toString());
