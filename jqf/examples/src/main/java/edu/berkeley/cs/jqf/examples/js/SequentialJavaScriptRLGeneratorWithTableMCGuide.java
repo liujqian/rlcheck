@@ -119,7 +119,7 @@ public class SequentialJavaScriptRLGeneratorWithTableMCGuide implements RLGenera
             ascii.add(String.valueOf(c));
 
         this.stateSize = (int) params.get("stateSize", true);
-
+        System.out.println("The state size for this run is " + this.stateSize);
         this.expression1SelectID = guide.addLearner(null, e);
         this.expression2SelectID = guide.addLearner(null, e);
         this.statements1SelectID = guide.addLearner(null, e);

@@ -7,15 +7,12 @@
  	{
  		"name": "stateSize",
 	    "type": "int",
-	    "val": 5
+	    "val": 160
 	},
 	{
 		"name": "defaultEpsilon",
 		"type": "double",
 		"val": 0.25
-	},
-	{"name": "explorationBonus",
-		"type": "int",
-		"val": 1}
+	}
 ]}
 
