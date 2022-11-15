@@ -9,15 +9,15 @@ public class ArrayBasedSarsaLearner {
     final String BEGIN_ACTION = "BEGIN";
     String[] currentState;
 
-    private HashMap<
+    HashMap<
             String, // states
             Map<
                     Object, // actions
                     Double[] // Q-value, count pairs
                     >
             > qTable;
-    private final int OLD_Q_INDEX = 1;
-    private final int NEW_Q_INDEX = 0;
+    final int OLD_Q_INDEX = 1;
+    final int NEW_Q_INDEX = 0;
     double episilon;
     List<AbstractMap.SimpleEntry<String, Object>> episode;
 
@@ -100,9 +100,11 @@ public class ArrayBasedSarsaLearner {
     public void update(double r) {
         Object actionToFinalState = episode.get(episode.size() - 1).getValue();
         String secondLastState = episode.get(episode.size() - 1).getKey();
-        double updatedQ = getQ(secondLastState, actionToFinalState) + alpha * (r + 0 - qTable.get((secondLastState)).get(actionToFinalState)[OLD_Q_INDEX]);
+        double oldQ = qTable.get((secondLastState)).get(actionToFinalState)[OLD_Q_INDEX];
+        double updatedQ = oldQ + alpha * (r + 0 - oldQ);
         updateQ(secondLastState, actionToFinalState, updatedQ);
         episode.clear();
+        episode.add(new AbstractMap.SimpleEntry<>("", BEGIN_ACTION));
         currentState = new String[currentState.length];
     }
 
