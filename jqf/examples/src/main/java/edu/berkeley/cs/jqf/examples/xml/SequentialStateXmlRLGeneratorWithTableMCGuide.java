@@ -216,8 +216,8 @@ public class SequentialStateXmlRLGeneratorWithTableMCGuide implements RLGenerato
     /* Update the state array in the original array! */
     private void updateState(String[] stateArr, String stateX) {
         int end = stateSize - 1;
-        stateArr[end] = stateX;
         System.arraycopy(stateArr, 1, stateArr, 0, end);
+        stateArr[end] = stateX;
     }
 }
 

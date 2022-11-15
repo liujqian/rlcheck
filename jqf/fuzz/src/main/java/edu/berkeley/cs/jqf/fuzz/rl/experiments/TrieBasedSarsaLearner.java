@@ -31,7 +31,7 @@ public class TrieBasedSarsaLearner {
         double newQForCurSA = a.getQ() + this.alpha * (0 + gamma * aapostrophy.getQ() - a.getQ());
         a.updateQ(newQForCurSA);
         this.currentState = sapostrophy;
-        return aapostrophy.action;
+        return currentState.selectedAction.action;
     }
 
     public void update(double r) {

@@ -501,6 +501,4 @@ public class ChildOnlyJavaScriptRLGeneratorWithTableMCGuide implements RLGenerat
         }
         return newState;
     }
-
-
 }

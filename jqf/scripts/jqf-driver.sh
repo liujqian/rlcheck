@@ -47,7 +47,7 @@ fi
 #   ${JVM_OPTS} \
 #   $@"
 
-"$java" -ea -Xmx32g\
+"$java" -ea \
   -Xbootclasspath/a:"$INST_CLASSPATH" \
   ${JAVAAGENT} \
   -Djanala.conf="${SCRIPT_DIR}/janala.conf" \

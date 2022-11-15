@@ -1,5 +1,6 @@
 package edu.berkeley.cs.jqf.examples.js;
 
+import edu.berkeley.cs.jqf.fuzz.rl.Guide;
 import edu.berkeley.cs.jqf.fuzz.rl.RLGenerator;
 import edu.berkeley.cs.jqf.fuzz.rl.RLGuide;
 import edu.berkeley.cs.jqf.fuzz.rl.RLParams;
@@ -584,7 +585,7 @@ public class SequentialJavaScriptRLGeneratorWithTableMCGuide implements RLGenera
     /* Update and return new state. Removes items if too long */
     private void updateState(String[] stateArr, String stateX) {
         int end = stateSize - 1;
-        stateArr[end] = stateX;
         System.arraycopy(stateArr, 1, stateArr, 0, end);
+        stateArr[end] = stateX;
     }
 }
