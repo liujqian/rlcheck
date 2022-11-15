@@ -6,10 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 @RunWith(JUnit4.class)
 public class TrieBasedMonteCarloLearnerTest {
@@ -21,28 +18,32 @@ public class TrieBasedMonteCarloLearnerTest {
     @Test
     public void episilonTest() {
         TrieBasedMonteCarloLearner learner = new TrieBasedMonteCarloLearner(0.0, new Random(SEED), false);
-        boolean b = (boolean) learner.select(bools);
-        Assert.assertFalse(b);
+        int b = (int) learner.select(ints);
+        Assert.assertEquals(4, b);
         learner.update(10);
         Assert.assertEquals(learner.getCurrentState(), learner.getRootState());
         Assert.assertEquals(1, learner.getRootState().getActions().size());
-        Assert.assertEquals(10, learner.getRootState().getActions().get(false).getQ(), 1e-9);
-        Assert.assertEquals(1, learner.getRootState().getActions().get(false).getCount());
+        Assert.assertEquals(10, learner.getRootState().getActions().get(4).getQ(), 1e-9);
+        Assert.assertEquals(1, learner.getRootState().getActions().get(4).getCount());
+        TrieBasedMonteCarloLearner.Action a1 = new TrieBasedMonteCarloLearner.Action(1, 0, new TrieBasedMonteCarloLearner.State(null, 0, 0), new Random());
+        TrieBasedMonteCarloLearner.Action a2 = new TrieBasedMonteCarloLearner.Action(2, 0, new TrieBasedMonteCarloLearner.State(null, 0, 0), new Random());
+        learner.getRootState().getActions().put(1, a1);
+        learner.getRootState().getActions().put(2, a2);
         for (int i = 0; i < 10000; i++) {
-            b = (boolean) learner.select(bools);
-            Assert.assertFalse(b);
+            b = (int) learner.select(ints);
+            Assert.assertEquals(4, b);
             learner.update(0);
         }
 
         learner = new TrieBasedMonteCarloLearner(0.5, new Random(SEED), false);
-        b = (boolean) learner.select(bools);
-        Assert.assertFalse(b);
+        boolean bool = (boolean) learner.select(bools);
+        Assert.assertFalse(bool);
         learner.update(10);
         double falseCnt = 0;
         double trueCnt = 0;
         for (int i = 0; i < 10000000; i++) {
-            b = (boolean) learner.select(bools);
-            if (b) {
+            bool = (boolean) learner.select(bools);
+            if (bool) {
                 trueCnt += 1;
             } else {
                 falseCnt += 1;

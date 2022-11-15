@@ -40,7 +40,7 @@ public class TrieBasedSarsaLearner {
         while (this.currentState != this.rootState){
             currentState.selectedAction = null;
             Action prevAction  = currentState.previousAction;
-            currentState = prevAction.currentState;
+            currentState = prevAction.parentState;
         }
     }
 
@@ -48,7 +48,7 @@ public class TrieBasedSarsaLearner {
         private double Q;
         private double oldQ;
         private TrieBasedSarsaLearner.State nextState;
-        private TrieBasedSarsaLearner.State currentState;
+        private TrieBasedSarsaLearner.State parentState;
         private Object action;
 
         public void updateQ(double newQ) {
@@ -64,11 +64,11 @@ public class TrieBasedSarsaLearner {
             this.Q = 0;
             this.action = action;
             this.nextState = new TrieBasedSarsaLearner.State(this, episilon, random);
-            this.currentState = currentState;
+            this.parentState = currentState;
         }
 
-        public State getCurrentState() {
-            return currentState;
+        public State getParentState() {
+            return parentState;
         }
 
         @Override
@@ -90,7 +90,7 @@ public class TrieBasedSarsaLearner {
 
         @Override
         public String toString() {
-            return previousAction == null ? "* " : previousAction.getCurrentState().toString() + "| " + previousAction + " ";
+            return previousAction == null ? "* " : previousAction.getParentState().toString() + "| " + previousAction + " ";
         }
 
         public State(Action previousAction, double episilon) {

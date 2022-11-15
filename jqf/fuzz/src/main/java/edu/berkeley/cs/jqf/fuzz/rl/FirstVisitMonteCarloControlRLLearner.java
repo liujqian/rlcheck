@@ -185,7 +185,4 @@ public class FirstVisitMonteCarloControlRLLearner implements RLLearner {
     public void forceAction(AbstractMap.SimpleEntry<String, Object> action) {
         episode.add(action);
     }
-
-    
-
 }
