@@ -1,17 +1,17 @@
 package edu.berkeley.cs.jqf.fuzz.rl.js;
 
+
 import edu.berkeley.cs.jqf.fuzz.rl.RLGenerator;
 import edu.berkeley.cs.jqf.fuzz.rl.RLGuide;
 import edu.berkeley.cs.jqf.fuzz.rl.RLParams;
-import edu.berkeley.cs.jqf.fuzz.rl.experiments.TrieBasedMonteCarloLearner;
+import edu.berkeley.cs.jqf.fuzz.rl.experiments.ArrayBasedSarsaLearner;
 
 import java.util.*;
 import java.util.function.Supplier;
 
+public class JavaScriptRLGeneratorWithTableSarsaGuide implements RLGenerator {
 
-public class JavaScriptRLGeneratorWithTrieMCGuide implements RLGenerator {
-
-    private TrieBasedMonteCarloLearner learner;
+    private ArrayBasedSarsaLearner learner;
     private static final int MAX_IDENTIFIERS = 50;
     private static final int MAX_EXPRESSION_DEPTH = 7;
     private static final int MAX_STATEMENT_DEPTH = 4;
@@ -67,7 +67,7 @@ public class JavaScriptRLGeneratorWithTrieMCGuide implements RLGenerator {
     private List<Object> bools;
     private List<Object> ascii;
 
-    public JavaScriptRLGeneratorWithTrieMCGuide() {
+    public JavaScriptRLGeneratorWithTableSarsaGuide() {
     }
 
     /**
@@ -79,21 +79,19 @@ public class JavaScriptRLGeneratorWithTrieMCGuide implements RLGenerator {
      */
     public void init(RLParams params) {
         double e = (double) params.get("defaultEpsilon", true);
-        boolean useBonus = false;
-        if (params.exists("explorationBonus")) {
-            useBonus = true;
-        }
+        this.stateSize = (int) params.get("stateSize", true);
+        System.out.println("The state size for this run is " + this.stateSize);
+
         if (params.exists("seed")) {
-            learner = new TrieBasedMonteCarloLearner(e, new Random((long) params.get("seed")), useBonus);
+            learner = new ArrayBasedSarsaLearner(e, 0.75, 1, new Random((long) params.get("seed")), stateSize);
         } else {
-            learner = new TrieBasedMonteCarloLearner(e, useBonus);
+            learner = new ArrayBasedSarsaLearner(e, 0.75, 1, new Random(), stateSize);
         }
         ints = Arrays.asList(RLGuide.range(MIN_INT, MAX_INT + 1));
         bools = Arrays.asList(BOOLEANS);
         ascii = new ArrayList<>(26);
         for (char c = 'A'; c <= 'Z'; c++)
             ascii.add(String.valueOf(c));
-        System.out.println("The \"init\" method of JavaScriptRLGeneratorWithTrieMCGuide is called! useBonus is " + useBonus + "!");
     }
 
     /**
@@ -450,4 +448,6 @@ public class JavaScriptRLGeneratorWithTrieMCGuide implements RLGenerator {
         }
         return newState;
     }
+
+
 }

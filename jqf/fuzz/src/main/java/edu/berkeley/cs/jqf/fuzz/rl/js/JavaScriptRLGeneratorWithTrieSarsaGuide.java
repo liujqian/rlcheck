@@ -3,7 +3,6 @@ package edu.berkeley.cs.jqf.fuzz.rl.js;
 import edu.berkeley.cs.jqf.fuzz.rl.RLGenerator;
 import edu.berkeley.cs.jqf.fuzz.rl.RLGuide;
 import edu.berkeley.cs.jqf.fuzz.rl.RLParams;
-import edu.berkeley.cs.jqf.fuzz.rl.experiments.TrieBasedMonteCarloLearner;
 import edu.berkeley.cs.jqf.fuzz.rl.experiments.TrieBasedSarsaLearner;
 
 import java.util.*;
