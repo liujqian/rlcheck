@@ -36,7 +36,7 @@ public class TrieBasedSarsaLearner {
 
     public void update(double r) {
         Action actionLedToFinalState = this.currentState.selectedAction;
-        actionLedToFinalState.updateQ(actionLedToFinalState.getOldQ() + alpha * (r + 0 - actionLedToFinalState.getOldQ()));
+        actionLedToFinalState.updateQ(actionLedToFinalState.getOldQ() + alpha * (r + 0 - actionLedToFinalState.getOldQ())); // TODO: This line may be wrong, should be getQ().
         while (this.currentState != this.rootState){
             currentState.selectedAction = null;
             Action prevAction  = currentState.previousAction;

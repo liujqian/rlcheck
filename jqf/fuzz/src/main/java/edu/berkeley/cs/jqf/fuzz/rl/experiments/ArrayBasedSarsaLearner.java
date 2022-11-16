@@ -64,7 +64,7 @@ public class ArrayBasedSarsaLearner {
         return aapostrophy;
     }
 
-    private double getQ(String state, Object a) {
+    protected double getQ(String state, Object a) {
         return qTable.get((state)).get(a)[NEW_Q_INDEX];
     }
 
@@ -100,8 +100,8 @@ public class ArrayBasedSarsaLearner {
     public void update(double r) {
         Object actionToFinalState = episode.get(episode.size() - 1).getValue();
         String secondLastState = episode.get(episode.size() - 1).getKey();
-        double oldQ = qTable.get((secondLastState)).get(actionToFinalState)[OLD_Q_INDEX];
-        double updatedQ = oldQ + alpha * (r + 0 - oldQ);
+        double q = qTable.get((secondLastState)).get(actionToFinalState)[NEW_Q_INDEX];
+        double updatedQ = q + alpha * (r + 0 - q);
         updateQ(secondLastState, actionToFinalState, updatedQ);
         episode.clear();
         episode.add(new AbstractMap.SimpleEntry<>("", BEGIN_ACTION));
@@ -121,7 +121,7 @@ public class ArrayBasedSarsaLearner {
         return newState;
     }
 
-    private String stateToString(String[] stateArr) {
+    protected String stateToString(String[] stateArr) {
         String state = "";
         String stateDelim = " | ";
         for (int i = 0; i < stateArr.length; i++) {
