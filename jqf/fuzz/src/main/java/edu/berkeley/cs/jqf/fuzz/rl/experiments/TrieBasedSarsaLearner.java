@@ -9,12 +9,14 @@ public class TrieBasedSarsaLearner {
 
     double gamma;
 
+    public final static String BEGIN_STATE = "begin";
+
     public TrieBasedSarsaLearner(double episilon, double alpha, double gamma, Random random) {
         if (random == null) {
             random = new Random();
         }
         this.rootState = new TrieBasedSarsaLearner.State(null, episilon, random);
-        this.rootState.select(Collections.singletonList("begin"), null);
+        this.rootState.select(Collections.singletonList(BEGIN_STATE), null);
         this.currentState = rootState;
         this.alpha = alpha;
         this.gamma = gamma;
@@ -36,10 +38,10 @@ public class TrieBasedSarsaLearner {
 
     public void update(double r) {
         Action actionLedToFinalState = this.currentState.selectedAction;
-        actionLedToFinalState.updateQ(actionLedToFinalState.getOldQ() + alpha * (r + 0 - actionLedToFinalState.getOldQ())); // TODO: This line may be wrong, should be getQ().
-        while (this.currentState != this.rootState){
+        actionLedToFinalState.updateQ(actionLedToFinalState.getQ() + alpha * (r + 0 - actionLedToFinalState.getQ()));
+        while (this.currentState != this.rootState) {
             currentState.selectedAction = null;
-            Action prevAction  = currentState.previousAction;
+            Action prevAction = currentState.previousAction;
             currentState = prevAction.parentState;
         }
     }
@@ -69,6 +71,10 @@ public class TrieBasedSarsaLearner {
 
         public State getParentState() {
             return parentState;
+        }
+
+        public State getNextState() {
+            return nextState;
         }
 
         @Override
@@ -103,6 +109,22 @@ public class TrieBasedSarsaLearner {
         public State(Action action, double episilon, Random random) {
             this(action, episilon);
             this.random = random;
+        }
+
+        public double getEpisilon() {
+            return episilon;
+        }
+
+        public Map<Object, Action> getActions() {
+            return actions;
+        }
+
+        public Action getPreviousAction() {
+            return previousAction;
+        }
+
+        public Action getSelectedAction() {
+            return selectedAction;
         }
 
         public Action select(List<Object> options, Integer forceSelectIndex) {
