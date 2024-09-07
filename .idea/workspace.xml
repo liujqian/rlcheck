@@ -5,12 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="87f065dd-ad38-4cfd-b7af-a6e69ede38bd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jqf/fuzz/src/main/java/edu/berkeley/cs/jqf/fuzz/rl/RLDriver.java" beforeDir="false" afterPath="$PROJECT_DIR$/jqf/fuzz/src/main/java/edu/berkeley/cs/jqf/fuzz/rl/RLDriver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jqf/scripts/jqf-driver.sh" beforeDir="false" afterPath="$PROJECT_DIR$/jqf/scripts/jqf-driver.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jqf/test/plot_data" beforeDir="false" afterPath="$PROJECT_DIR$/jqf/test/plot_data" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jqf/fuzz/src/main/java/edu/berkeley/cs/jqf/fuzz/rl/RLGuidance.java" beforeDir="false" afterPath="$PROJECT_DIR$/jqf/fuzz/src/main/java/edu/berkeley/cs/jqf/fuzz/rl/RLGuidance.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,16 +44,16 @@
     "Shell Script.run_java_exps.executor": "Run",
     "git-widget-placeholder": "larry",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/jingqian/IdeaProjects/rlcheck/scripts/run_java_exps.sh",
+    "last_opened_file_path": "/home/jingqian/miniconda3/bin/conda",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "reference.settings.ide.settings.notifications",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -121,7 +119,10 @@
       <workItem from="1725681292978" duration="139000" />
       <workItem from="1725681435268" duration="4181000" />
       <workItem from="1725688463293" duration="3127000" />
-      <workItem from="1725694017735" duration="306000" />
+      <workItem from="1725694017735" duration="596000" />
+      <workItem from="1725731866427" duration="269000" />
+      <workItem from="1725732140258" duration="46000" />
+      <workItem from="1725732189858" duration="8657000" />
     </task>
     <servers />
   </component>

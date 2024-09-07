@@ -1,4 +1,5 @@
 package edu.berkeley.cs.jqf.fuzz.rl;
+
 import edu.berkeley.cs.jqf.fuzz.ei.ZestGuidance;
 import edu.berkeley.cs.jqf.fuzz.guidance.Guidance;
 import edu.berkeley.cs.jqf.fuzz.guidance.GuidanceException;
@@ -25,108 +26,165 @@ public class RLGuidance implements Guidance {
     // This field is used to ensure that
     protected Thread appThread;
 
-    /** A pseudo-random number generator for generating fresh values. */
+    /**
+     * A pseudo-random number generator for generating fresh values.
+     */
     protected Random random = new Random();
 
-    /** The name of the test for display purposes. */
+    /**
+     * The name of the test for display purposes.
+     */
     protected final String testName;
 
     // ------------ ALGORITHM BOOKKEEPING ------------
 
-    /** The max amount of time to run for, in milli-seconds */
+    /**
+     * The max amount of time to run for, in milli-seconds
+     */
     protected final long maxDurationMillis;
 
-    /** The number of trials completed. */
+    /**
+     * The number of trials completed.
+     */
     protected long numTrials = 0;
 
-    /** The number of valid inputs. */
+    /**
+     * The number of valid inputs.
+     */
     protected long numValid = 0;
 
-    /** The directory where fuzzing results are written. */
+    /**
+     * The directory where fuzzing results are written.
+     */
     protected final File outputDirectory;
 
-    /** The directory where saved inputs are written. */
+    /**
+     * The directory where saved inputs are written.
+     */
     protected File savedInputsDirectory;
 
-    /** The directory where saved inputs are written. */
+    /**
+     * The directory where saved inputs are written.
+     */
     protected File savedFailuresDirectory;
 
-    /** Number of saved inputs.
-     *
+    /**
+     * Number of saved inputs.
+     * <p>
      * This is usually the same as savedInputs.size(),
      * but we do not really save inputs in TOTALLY_RANDOM mode.
      */
     protected int numSavedInputs = 0;
 
-    /** Coverage statistics for a single run. */
+    /**
+     * Coverage statistics for a single run.
+     */
     protected Coverage runCoverage = new Coverage();
 
-    /** Cumulative coverage statistics. */
+    /**
+     * Cumulative coverage statistics.
+     */
     protected Coverage totalCoverage = new Coverage();
 
-    /** Cumulative coverage for valid inputs. */
+    /**
+     * Cumulative coverage for valid inputs.
+     */
     protected Coverage validCoverage = new Coverage();
 
-//    protected Set<String> uniqueValidInputs = new HashSet<>();
+    //    protected Set<String> uniqueValidInputs = new HashSet<>();
     protected Set<Integer> uniqueValidInputs = new HashSet<>();
 
 
-    /** Unique paths for valid inputs */
+    /**
+     * Unique paths for valid inputs
+     */
     protected Set<Integer> uniquePaths = new HashSet<>();
 
-    /** Unique branch sets for valid inputs */
+    /**
+     * Unique branch sets for valid inputs
+     */
     protected Set<Integer> uniqueBranchSets = new HashSet<>();
 
 
-    /** The set of unique failures found so far. */
+    /**
+     * The set of unique failures found so far.
+     */
     protected Set<List<StackTraceElement>> uniqueFailures = new HashSet<>();
 
     // ---------- LOGGING / STATS OUTPUT ------------
 
-    /** Whether to print log statements to stderr (debug option; manually edit). */
+    /**
+     * Whether to print log statements to stderr (debug option; manually edit).
+     */
     protected final boolean verbose = true;
 
-    /** A system console, which is non-null only if STDOUT is a console. */
+    /**
+     * A system console, which is non-null only if STDOUT is a console.
+     */
     protected final Console console = System.console();
 
-    /** Time since this guidance instance was created. */
+    /**
+     * Time since this guidance instance was created.
+     */
     protected final Date startTime = new Date();
 
-    /** Time at last stats refresh. */
+    /**
+     * Time at last stats refresh.
+     */
     protected Date lastRefreshTime = startTime;
 
-    /** Total execs at last stats refresh. */
+    /**
+     * Total execs at last stats refresh.
+     */
     protected long lastNumTrials = 0;
 
-    /** Minimum amount of time (in millis) between two stats refreshes. */
+    /**
+     * Minimum amount of time (in millis) between two stats refreshes.
+     */
     protected static final long STATS_REFRESH_TIME_PERIOD = 300;
 
-    /** The file where log data is written. */
+    /**
+     * The file where log data is written.
+     */
     protected File logFile;
 
-    /** The file where saved plot data is written. */
+    /**
+     * The file where saved plot data is written.
+     */
     protected File statsFile;
 
-    /** The currently executing input (for debugging purposes). */
+    /**
+     * The currently executing input (for debugging purposes).
+     */
     protected String currentInput;
 
     // ------------- TIMEOUT HANDLING ------------
 
-    /** Timeout for an individual run. */
+    /**
+     * Timeout for an individual run.
+     */
     protected long singleRunTimeoutMillis;
 
-    /** Date when last run was started. */
+    /**
+     * Date when last run was started.
+     */
     protected Date runStart;
 
-    /** Number of conditional jumps since last run was started. */
+    /**
+     * Number of conditional jumps since last run was started.
+     */
     protected long branchCount;
 
-    /** Maximum number of trials to run */
+    /**
+     * Maximum number of trials to run
+     */
     protected Long maxTrials = Long.getLong("jqf.guidance.MAX_TRIALS");
 
     // ----------- FUZZING HEURISTICS ------------
 
-   /** Whether to use greybox information in rewards **/
+    /**
+     * Whether to use greybox information in rewards
+     **/
     static final boolean USE_GREYBOX = Boolean.getBoolean("rl.guidance.USE_GREYBOX");
 
     public RLGuidance(RLGenerator g, String testName, Duration duration, File outputDirectory) throws IOException {
@@ -134,6 +192,7 @@ public class RLGuidance implements Guidance {
         this.testName = testName;
         this.maxDurationMillis = duration != null ? duration.toMillis() : Long.MAX_VALUE;
         this.outputDirectory = outputDirectory;
+        this.maxTrials = (long) 10;
         prepareOutputDirectory();
     }
 
@@ -147,8 +206,9 @@ public class RLGuidance implements Guidance {
 
     @Override
     public boolean hasInput() {
-        if (maxTrials != null){
-            if (numTrials >= maxTrials){
+        update_plot_data();
+        if (maxTrials != null) {
+            if (numTrials >= maxTrials) {
                 displayStats(true);
             }
             return numTrials < maxTrials;
@@ -188,15 +248,15 @@ public class RLGuidance implements Guidance {
 
             if (valid) {
                 validCoverage.updateBits(runCoverage);
-                if (!uniqueValidInputs.contains(currentInput.hashCode())){
+                if (!uniqueValidInputs.contains(currentInput.hashCode())) {
                     uniqueValidInputs.add(currentInput.hashCode());
 
                     uniquePaths.add(runCoverage.hashCode());
                     boolean has_new_branches_covered = uniqueBranchSets.add(runCoverage.nonZeroHashCode());
-                    
+
                     if (USE_GREYBOX) {
-                      // Greybox: only reward for inputs that cover new branches
-                        if (has_new_branches_covered){
+                        // Greybox: only reward for inputs that cover new branches
+                        if (has_new_branches_covered) {
                             generator.update(20);
                         } else {
                             generator.update(0);
@@ -303,10 +363,12 @@ public class RLGuidance implements Guidance {
     }
 
 
-    /** Returns the banner to be displayed on the status screen */
+    /**
+     * Returns the banner to be displayed on the status screen
+     */
     protected String getTitle() {
-            return  "RL Fuzzing\n" +
-                    "--------------------\n";
+        return "RL Fuzzing\n" +
+                "--------------------\n";
     }
 
 
@@ -332,11 +394,11 @@ public class RLGuidance implements Guidance {
         writer.flush();
     }
 
-    private void displayStats(){
+    private void displayStats() {
         displayStats(false);
     }
 
-        // Call only if console exists
+    // Call only if console exists
     private void displayStats(boolean force) {
 
         Date now = new Date();
@@ -358,7 +420,7 @@ public class RLGuidance implements Guidance {
         int nonZeroValidCount = validCoverage.getNonZeroCount();
         double nonZeroValidFraction = nonZeroValidCount * 100.0 / validCoverage.size();
 
-        if (console != null ){
+        if (console != null) {
             console.printf("\033[2J");
             console.printf("\033[H");
             console.printf(this.getTitle() + "\n");
@@ -369,13 +431,13 @@ public class RLGuidance implements Guidance {
             console.printf("Elapsed time:         %s (%s)\n", millisToDuration(elapsedMilliseconds),
                     maxDurationMillis == Long.MAX_VALUE ? "no time limit" : ("max " + millisToDuration(maxDurationMillis)));
             console.printf("Number of executions: %,d\n", numTrials);
-            console.printf("Valid inputs:         %,d (%.2f%%)\n", numValid, numValid*100.0/numTrials);
+            console.printf("Valid inputs:         %,d (%.2f%%)\n", numValid, numValid * 100.0 / numTrials);
             console.printf("Unique failures:      %,d\n", uniqueFailures.size());
             console.printf("Execution speed:      %,d/sec now | %,d/sec overall\n", intervalExecsPerSec, execsPerSec);
             console.printf("Total coverage:       %,d branches (%.2f%% of map)\n", nonZeroCount, nonZeroFraction);
             console.printf("Valid coverage:       %,d branches (%.2f%% of map)\n", nonZeroValidCount, nonZeroValidFraction);
             console.printf("Unique valid inputs:  %,d (%.2f%%)\n", uniqueValidInputs.size(),
-                    uniqueValidInputs.size()*100.0/numTrials);
+                    uniqueValidInputs.size() * 100.0 / numTrials);
             console.printf("Unique valid paths:   %,d \n", uniquePaths.size());
             console.printf("''  non-zero paths:   %,d \n", uniqueBranchSets.size());
         }
@@ -385,6 +447,17 @@ public class RLGuidance implements Guidance {
                 numTrials, numValid, uniquePaths.size(), uniqueBranchSets.size(), uniqueValidInputs.size());
         appendLineToFile(statsFile, plotData);
 
+    }
+
+    private void update_plot_data() {
+        int nonZeroCount = totalCoverage.getNonZeroCount();
+        double nonZeroFraction = nonZeroCount * 100.0 / totalCoverage.size();
+        int nonZeroValidCount = validCoverage.getNonZeroCount();
+        double nonZeroValidFraction = nonZeroValidCount * 100.0 / validCoverage.size();
+        String plotData = String.format("%d, %d, %d, %d, %d, %d, %d, %d, %d",
+                TimeUnit.MILLISECONDS.toSeconds(new Date().getTime()), uniqueFailures.size(), nonZeroCount, nonZeroValidCount,
+                numTrials, numValid, uniquePaths.size(), uniqueBranchSets.size(), uniqueValidInputs.size());
+        appendLineToFile(statsFile, plotData);
     }
 
     private void appendLineToFile(File file, String line) throws GuidanceException {
@@ -407,7 +480,9 @@ public class RLGuidance implements Guidance {
         return this::handleEvent;
     }
 
-    /** Handles a trace event generated during test execution */
+    /**
+     * Handles a trace event generated during test execution
+     */
     protected void handleEvent(TraceEvent e) {
         // Collect totalCoverage
         runCoverage.handleEvent(e);
