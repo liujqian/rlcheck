@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/scripts/generate_plot/generate_plot.iml" filepath="$PROJECT_DIR$/scripts/generate_plot/generate_plot.iml" />
-      <module fileurl="file://$PROJECT_DIR$/jqf/jqf.iml" filepath="$PROJECT_DIR$/jqf/jqf.iml" />
       <module fileurl="file://$PROJECT_DIR$/jqf/examples/jqf-examples.iml" filepath="$PROJECT_DIR$/jqf/examples/jqf-examples.iml" />
-      <module fileurl="file://$PROJECT_DIR$/jqf/fuzz/jqf-fuzz.iml" filepath="$PROJECT_DIR$/jqf/fuzz/jqf-fuzz.iml" />
-      <module fileurl="file://$PROJECT_DIR$/jqf/instrument/jqf-instrument.iml" filepath="$PROJECT_DIR$/jqf/instrument/jqf-instrument.iml" />
-      <module fileurl="file://$PROJECT_DIR$/jqf/maven-plugin/jqf-maven-plugin.iml" filepath="$PROJECT_DIR$/jqf/maven-plugin/jqf-maven-plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/rlcheck.iml" filepath="$PROJECT_DIR$/.idea/rlcheck.iml" />
     </modules>
   </component>
