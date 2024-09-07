@@ -23,10 +23,10 @@ import java.io.BufferedReader;
 public class RLDriver {
 
     public static void main(String[] args) {
-        boolean isTesting = false;
+        boolean isTesting = args.length == 0;
         Duration runTime = null;
         if (isTesting){
-            System.out.println("Running tests...");
+            System.out.println("Running with testing arguments...");
             args = new String[]{
                     "edu.berkeley.cs.jqf.examples.rhino.CompilerTest",
                     "testWithGenerator",
