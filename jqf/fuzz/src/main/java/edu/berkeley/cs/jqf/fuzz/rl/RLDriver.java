@@ -23,7 +23,7 @@ import java.io.BufferedReader;
 public class RLDriver {
 
     public static void main(String[] args) {
-        boolean isTesting = true;
+        boolean isTesting = false;
         Duration runTime = null;
         if (isTesting){
             System.out.println("Running tests...");

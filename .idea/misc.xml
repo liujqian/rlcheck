@@ -4,6 +4,7 @@
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
+        <option value="$PROJECT_DIR$/jqf/fuzz/pom.xml" />
         <option value="$PROJECT_DIR$/jqf/pom.xml" />
       </list>
     </option>

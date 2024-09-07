@@ -5,7 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="87f065dd-ad38-4cfd-b7af-a6e69ede38bd" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/jqf/fuzz/src/main/java/edu/berkeley/cs/jqf/fuzz/rl/RLDriver.java" beforeDir="false" afterPath="$PROJECT_DIR$/jqf/fuzz/src/main/java/edu/berkeley/cs/jqf/fuzz/rl/RLDriver.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jqf/test/plot_data" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/run_java_exps.sh" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/run_java_exps.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,28 +32,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.RLDriver-partially-workable.executor&quot;: &quot;Run&quot;,
-    &quot;Application.RLDriver.executor&quot;: &quot;Run&quot;,
-    &quot;Maven. [package].executor&quot;: &quot;Run&quot;,
-    &quot;Maven.jqf [package,-DskipTests=true].executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;larry&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.ide.settings.notifications&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.RLDriver (1).executor": "Run",
+    "Application.RLDriver-partially-workable.executor": "Run",
+    "Application.RLDriver.executor": "Run",
+    "Maven. [package].executor": "Run",
+    "Maven.jqf [package,-DskipTests=true].executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "Shell Script.run_java_exps.executor": "Run",
+    "git-widget-placeholder": "larry",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/jingqian/IdeaProjects/rlcheck/scripts/run_java_exps.sh",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "reference.settings.ide.settings.notifications",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
-  <component name="RunManager">
+}]]></component>
+  <component name="RunManager" selected="Shell Script.run_java_exps">
     <configuration name="RLDriver" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="edu.berkeley.cs.jqf.fuzz.rl.RLDriver" />
       <module name="jqf-examples" />
@@ -79,6 +85,25 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="run_java_exps" type="ShConfigurationType">
+      <option name="SCRIPT_TEXT" value="" />
+      <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
+      <option name="SCRIPT_PATH" value="$PROJECT_DIR$/scripts/run_java_exps.sh" />
+      <option name="SCRIPT_OPTIONS" value="run_java_exps_results 1" />
+      <option name="INDEPENDENT_SCRIPT_WORKING_DIRECTORY" value="true" />
+      <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="INDEPENDENT_INTERPRETER_PATH" value="true" />
+      <option name="INTERPRETER_PATH" value="/bin/bash" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="EXECUTE_IN_TERMINAL" value="true" />
+      <option name="EXECUTE_SCRIPT_FILE" value="true" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Application.RLDriver" />
+      <item itemvalue="Shell Script.run_java_exps" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Application.RLDriver" />
@@ -105,6 +130,7 @@
       <workItem from="1725680577853" duration="711000" />
       <workItem from="1725681292978" duration="139000" />
       <workItem from="1725681435268" duration="4181000" />
+      <workItem from="1725688463293" duration="3127000" />
     </task>
     <servers />
   </component>

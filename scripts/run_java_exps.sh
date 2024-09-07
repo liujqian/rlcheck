@@ -1,5 +1,5 @@
 #!/bin/bash
-
+export JQF_DIR="/home/liujqian/IdeaProjects/rlcheck/jqf"
 if [ "$#" -ne 2 ]; then
 	echo "Usage: $0 out_dir num_reps"
 	exit 1
@@ -12,12 +12,12 @@ fi
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 JQF_DIR=$DIR/../jqf
-
+echo "JQF_DIR is set to $JQF_DIR"
 BASE_OUT_DIR=$1
 NUM_REPS=$2
 OUT_DIR=$BASE_OUT_DIR/java-data
 mkdir -p $OUT_DIR
-LOG_FILE=experiments.log
+LOG_FILE=$OUT_DIR/experiments.log
 touch $LOG_FILE
 echo "Start time: $(date)" > $LOG_FILE
 echo "Experiment settings: writing to $OUT_DIR, doing $NUM_REPS repetitions" >> $LOG_FILE
