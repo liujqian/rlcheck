@@ -5,6 +5,7 @@ import edu.berkeley.cs.jqf.fuzz.junit.GuidedFuzzing;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,15 +23,25 @@ import java.io.BufferedReader;
 public class RLDriver {
 
     public static void main(String[] args) {
-
+        boolean isTesting = true;
+        Duration runTime = null;
+        if (isTesting){
+            System.out.println("Running tests...");
+            args = new String[]{
+                    "edu.berkeley.cs.jqf.examples.rhino.CompilerTest",
+                    "testWithGenerator",
+                    "edu.berkeley.cs.jqf.examples.js.JavaScriptRLGenerator",
+                    "jqf/configFiles/rhinoConfig.json",
+                    "jqf/test"
+            };
+            final long MAX_RUN_TIME_SEC = 10;
+            runTime = Duration.ofSeconds(MAX_RUN_TIME_SEC);
+        }
         if (args.length < 4){
             System.err.println("Usage: java " + RLDriver.class + " TEST_CLASS TEST_METHOD GENERATOR_CLASS CONFIG_FILE [OUTPUT_DIR]");
             System.exit(1);
         }
-        boolean isTesting = true;
-        if (isTesting){
-            
-        }
+
 
         String testClassName  = args[0];
         String testMethodName = args[1];
@@ -58,7 +69,7 @@ public class RLDriver {
 
             // Load the guidance
             String title = testClassName+"#"+testMethodName + " (" + genClassName + ")";
-            Guidance guidance = new RLGuidance(gen, title, null, outputDirectory);
+            Guidance guidance = new RLGuidance(gen, title, runTime, outputDirectory);
 
             // Run the Junit test
             GuidedFuzzing.run(testClassName, testMethodName, guidance, System.out);
