@@ -34,8 +34,8 @@ public class RLDriver {
                     "jqf/configFiles/rhinoConfig.json",
                     "jqf/test"
             };
-            final long MAX_RUN_TIME_SEC = 10;
-            runTime = Duration.ofSeconds(MAX_RUN_TIME_SEC);
+            final long MAX_RUN_TIME_SEC = 300;
+            runTime = null;
         }
         if (args.length < 4){
             System.err.println("Usage: java " + RLDriver.class + " TEST_CLASS TEST_METHOD GENERATOR_CLASS CONFIG_FILE [OUTPUT_DIR]");

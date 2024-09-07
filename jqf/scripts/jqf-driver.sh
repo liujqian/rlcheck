@@ -39,14 +39,6 @@ else
     java="java"
 fi
 
- echo "jqf-driver is lauching the following: "$java" -ea \
-   -Xbootclasspath/a:"$INST_CLASSPATH" \
-   ${JAVAAGENT} \
-   -Djanala.conf="${SCRIPT_DIR}/janala.conf" \
-   -cp "${FUZZ_CLASSPATH}:${CLASSPATH}" \
-   ${JVM_OPTS} \
-   $@"
-
 "$java" -ea \
   -Xbootclasspath/a:"$INST_CLASSPATH" \
   ${JAVAAGENT} \
