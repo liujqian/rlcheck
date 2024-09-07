@@ -27,6 +27,10 @@ public class RLDriver {
             System.err.println("Usage: java " + RLDriver.class + " TEST_CLASS TEST_METHOD GENERATOR_CLASS CONFIG_FILE [OUTPUT_DIR]");
             System.exit(1);
         }
+        boolean isTesting = true;
+        if (isTesting){
+            
+        }
 
         String testClassName  = args[0];
         String testMethodName = args[1];
