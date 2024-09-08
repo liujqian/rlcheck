@@ -192,7 +192,6 @@ public class RLGuidance implements Guidance {
         this.testName = testName;
         this.maxDurationMillis = duration != null ? duration.toMillis() : Long.MAX_VALUE;
         this.outputDirectory = outputDirectory;
-        this.maxTrials = (long) 10;
         prepareOutputDirectory();
     }
 

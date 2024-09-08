@@ -5,10 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="87f065dd-ad38-4cfd-b7af-a6e69ede38bd" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/scripts.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jqf/fuzz/src/main/java/edu/berkeley/cs/jqf/fuzz/rl/RLDriver.java" beforeDir="false" afterPath="$PROJECT_DIR$/jqf/fuzz/src/main/java/edu/berkeley/cs/jqf/fuzz/rl/RLDriver.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jqf/fuzz/src/main/java/edu/berkeley/cs/jqf/fuzz/rl/RLGuidance.java" beforeDir="false" afterPath="$PROJECT_DIR$/jqf/fuzz/src/main/java/edu/berkeley/cs/jqf/fuzz/rl/RLGuidance.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/run_java_exps.sh" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/run_java_exps.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,12 +40,14 @@
     "Application.RLDriver.executor": "Run",
     "Maven. [package].executor": "Run",
     "Maven.jqf [package,-DskipTests=true].executor": "Run",
+    "Python.gen_fig4_fig5.executor": "Debug",
+    "Python.gen_fig6_fig7_fig8.executor": "Debug",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "Shell Script.run_java_exps.executor": "Run",
     "git-widget-placeholder": "larry",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/jingqian/miniconda3/bin/conda",
+    "last_opened_file_path": "/home/jingqian/IdeaProjects/rlcheck/scripts",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -57,7 +60,7 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected="Application.RLDriver">
+  <component name="RunManager" selected="Python.gen_fig6_fig7_fig8">
     <configuration name="RLDriver" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="edu.berkeley.cs.jqf.fuzz.rl.RLDriver" />
       <module name="jqf-examples" />
@@ -72,6 +75,83 @@
         <option name="Make" enabled="true" />
         <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/jqf/pom.xml" goal="package -DskipTests=true " />
       </method>
+    </configuration>
+    <configuration name="jqf [package,-DskipTests=true]" type="MavenRunConfiguration" factoryName="Maven" nameIsGenerated="true">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="cmdOptions" />
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list>
+                <option value="package" />
+                <option value="-DskipTests=true" />
+              </list>
+            </option>
+            <option name="multimoduleDir" />
+            <option name="pomFileName" />
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="projectsCmdOptionValues">
+              <list />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="$PROJECT_DIR$/jqf" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <method v="2" />
+    </configuration>
+    <configuration name="gen_fig4_fig5" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="scripts" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/scripts/gen_fig4_fig5.py" />
+      <option name="PARAMETERS" value="run_java_exps_results" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="gen_fig6_fig7_fig8" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="scripts" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/scripts/gen_fig6_fig7_fig8.py" />
+      <option name="PARAMETERS" value="run_java_exps_results" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
     </configuration>
     <configuration name="run_java_exps" type="ShConfigurationType">
       <option name="SCRIPT_TEXT" value="" />
@@ -90,10 +170,15 @@
     </configuration>
     <list>
       <item itemvalue="Application.RLDriver" />
+      <item itemvalue="Maven.jqf [package,-DskipTests=true]" />
+      <item itemvalue="Python.gen_fig6_fig7_fig8" />
+      <item itemvalue="Python.gen_fig4_fig5" />
       <item itemvalue="Shell Script.run_java_exps" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.gen_fig6_fig7_fig8" />
+        <item itemvalue="Python.gen_fig4_fig5" />
         <item itemvalue="Application.RLDriver" />
       </list>
     </recent_temporary>
@@ -122,7 +207,7 @@
       <workItem from="1725694017735" duration="596000" />
       <workItem from="1725731866427" duration="269000" />
       <workItem from="1725732140258" duration="46000" />
-      <workItem from="1725732189858" duration="8657000" />
+      <workItem from="1725732189858" duration="12301000" />
     </task>
     <servers />
   </component>
@@ -148,7 +233,21 @@
           <line>183</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/scripts/gen_fig4_fig5.py</url>
+          <line>154</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/scripts/gen_fig6_fig7_fig8.py</url>
+          <line>74</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/rlcheck$gen_fig6_fig7_fig8.coverage" NAME="gen_fig6_fig7_fig8 Coverage Results" MODIFIED="1725755419629" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/rlcheck$gen_fig4_fig5.coverage" NAME="gen_fig4_fig5 Coverage Results" MODIFIED="1725754665238" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
