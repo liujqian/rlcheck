@@ -76,41 +76,41 @@ for bench_index in {0..3}; do
 			echo "[$(date)] Finished RLCheck replay." >> $LOG_FILE
 		fi
 
-		# Then QuickCheck
-		DIRNAME=${OUT_DIR}/quickcheck-$BENCHMARK-$REP
-		if  dir_does_not_exist $DIRNAME ; then
-			timeout 300 $JQF_DIR/bin/jqf-quickcheck -n -c $($JQF_DIR/scripts/examples_classpath.sh) $TEST_CLASS $TEST_METHOD_ZQC $DIRNAME &
-		        PID=$!
-			wait $PID	
-			echo "[$(date)] Finished regular QuickCheck. Staring replay to collect instrumentation data." >> $LOG_FILE
-		fi
-		REPLAYNAME=$DIRNAME-replay
-		if  dir_does_not_exist $REPLAYNAME ; then
-			REPLAYNUM=$(tail -n 1 $DIRNAME/plot_data | awk -F', ' '{print $5}')
-			$JQF_DIR/bin/jqf-quickcheck -N $REPLAYNUM -c $($JQF_DIR/scripts/examples_classpath.sh) $TEST_CLASS $TEST_METHOD_ZQC $REPLAYNAME & 
-		        PID=$!
-			wait $PID	
-			echo "[$(date)] Finished QuickCheckCheck replay." >> $LOG_FILE
-		fi
+#		# Then QuickCheck
+#		DIRNAME=${OUT_DIR}/quickcheck-$BENCHMARK-$REP
+#		if  dir_does_not_exist $DIRNAME ; then
+#			timeout 300 $JQF_DIR/bin/jqf-quickcheck -n -c $($JQF_DIR/scripts/examples_classpath.sh) $TEST_CLASS $TEST_METHOD_ZQC $DIRNAME &
+#		        PID=$!
+#			wait $PID
+#			echo "[$(date)] Finished regular QuickCheck. Staring replay to collect instrumentation data." >> $LOG_FILE
+#		fi
+#		REPLAYNAME=$DIRNAME-replay
+#		if  dir_does_not_exist $REPLAYNAME ; then
+#			REPLAYNUM=$(tail -n 1 $DIRNAME/plot_data | awk -F', ' '{print $5}')
+#			$JQF_DIR/bin/jqf-quickcheck -N $REPLAYNUM -c $($JQF_DIR/scripts/examples_classpath.sh) $TEST_CLASS $TEST_METHOD_ZQC $REPLAYNAME &
+#		        PID=$!
+#			wait $PID
+#			echo "[$(date)] Finished QuickCheckCheck replay." >> $LOG_FILE
+#		fi
 
-		# Finally done with the replaying ones... Let's do Zest..
-		DIRNAME=${OUT_DIR}/zest-$BENCHMARK-$REP
-		if  dir_does_not_exist $DIRNAME ; then
-			timeout 300 $JQF_DIR/bin/jqf-quickcheck -c $($JQF_DIR/scripts/examples_classpath.sh) $TEST_CLASS $TEST_METHOD_ZQC $DIRNAME &
-		        PID=$!
-			wait $PID	
-			echo "[$(date)] Finished Zest. No need to replay." >> $LOG_FILE
-		fi
+#		# Finally done with the replaying ones... Let's do Zest..
+#		DIRNAME=${OUT_DIR}/zest-$BENCHMARK-$REP
+#		if  dir_does_not_exist $DIRNAME ; then
+#			timeout 300 $JQF_DIR/bin/jqf-quickcheck -c $($JQF_DIR/scripts/examples_classpath.sh) $TEST_CLASS $TEST_METHOD_ZQC $DIRNAME &
+#		        PID=$!
+#			wait $PID
+#			echo "[$(date)] Finished Zest. No need to replay." >> $LOG_FILE
+#		fi
 
 		# Finally, greybox RLCheck
-		DIRNAME=${OUT_DIR}/rl-greybox-$BENCHMARK-$REP
-		if  dir_does_not_exist $DIRNAME ; then
-			CONFIG=$JQF_DIR/configFiles/$CONFIG_FILE
-			JVM_OPTS="$JVM_OPTS -Drl.guidance.USE_GREYBOX=true" timeout 300 $JQF_DIR/bin/jqf-rl -c $($JQF_DIR/scripts/examples_classpath.sh) $TEST_CLASS $TEST_METHOD_RL $TEST_GEN $CONFIG $DIRNAME &
-		        PID=$!
-			wait $PID	
-			echo "[$(date)] Finished Greybox RLCheck. No need to replay." >> $LOG_FILE
-		fi
+#		DIRNAME=${OUT_DIR}/rl-greybox-$BENCHMARK-$REP
+#		if  dir_does_not_exist $DIRNAME ; then
+#			CONFIG=$JQF_DIR/configFiles/$CONFIG_FILE
+#			JVM_OPTS="$JVM_OPTS -Drl.guidance.USE_GREYBOX=true" timeout 300 $JQF_DIR/bin/jqf-rl -c $($JQF_DIR/scripts/examples_classpath.sh) $TEST_CLASS $TEST_METHOD_RL $TEST_GEN $CONFIG $DIRNAME &
+#		        PID=$!
+#			wait $PID
+#			echo "[$(date)] Finished Greybox RLCheck. No need to replay." >> $LOG_FILE
+#		fi
 
 	done # Done rep
 done # Done bench
